@@ -1,0 +1,45 @@
+html, body, div, span, applet, object, iframe, 
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
+a, abbr, acronym, address, big, cite, code, 
+del, dfn, em, font, img, ins, kbd, q, s, samp, 
+small, strike, strong, sub, sup, tt, var, 
+dl, dt, dd, ol, ul, li, 
+fieldset, form, label, legend, 
+table, caption, tbody, tfoot, thead, tr, th, td{margin:0; padding:0; border:0; outline:0; font-weight:inherit; font-style:inherit; font-size:100%; font-family:inherit; vertical-align:baseline}
+
+:focus{outline:0}
+body{line-height:1; color:black; background:white}
+ol, ul{list-style:none}
+
+table{border-collapse:separate; border-spacing:0}
+caption, th, td{text-align:left; font-weight:normal}
+blockquote:before, blockquote:after, 
+q:before, q:after{content:""}
+blockquote, q{quotes:""""}
+strong{font-weight: bold;}
+
+/******************************************************************************/
+/*                            YOUR CSS STARTS HERE                            */
+/*                                                                            */
+/* Delete this style below to customize your own css                          */
+/******************************************************************************/
+body{ text-align: center;}
+.o { overflow: hidden;}
+.oa{ overflow: auto;}
+.l{ float: left;}
+.r{float: right;}
+.container{ text-align: left; width: 960px; margin: 0px auto; background: #D1DBDB; margin-bottom: 5px; padding: 5px;}
+.pad{ padding: 5px; }
+.column{ display: inline;float: left;}
+.menu {
+    display: inline;
+    list-style-type: none;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+}
+.menu li {
+    display: inline;
+    position: relative;
+    margin-left: 10px;
+}

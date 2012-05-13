@@ -1,0 +1,8 @@
+#RewriteEngine on
+#RewriteCond %{HTTP_REFERER} !^$
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?example.com/.*$ [NC]
+#RewriteRule \.(gif|jpg|png|jpeg|js|css)$ - [F]
+
+<Files include_all.php>
+deny from all
+</Files>

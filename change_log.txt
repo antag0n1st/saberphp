@@ -1,0 +1,31 @@
+Version Beta :
+
+    28.08.2011 - If layout is null , then do not load the layout
+    28.08.2011 - Ajax Controller , the Controller class is extended to be able to 
+                 import other classes , in such a way that the methods called 
+                 in the Ajax Controller will call the methods of the imported classes
+                 , The classes are imported from the Ajax Handler class
+    28.08.2011 - Plug-ins architecture added.
+    28.08.2011 - security , the methods in the controllers that you don't want to 
+                 be accessible publicly , in the browser address bar , you 
+                 should name them with a leading underscore.
+    28.08.2011 - The methods with multiple words should be separated with underscore
+                 but should be accessed with a "-" in the address bar
+    28.08.2011 - Controller should be named with Controller at the end of the 
+                 class name example: class MyClassController{}
+    28.08.2011 - Paginator view extended to print the neighbor pages only
+    28.08.2011 - Loading the manifest file , and its $conf array
+    28.08.2011 - new order in the boot section , and a onload attribute added to
+                 the plug-ins manifest file.
+    03.09.2011 - the url can now have additional GET parameters with the traditional
+                 ? (question mark) appended at the end of the url
+    03.09.2011 - bug fix in the Controller class , the arguments in the plug-in
+                 functions where not properly passed on. (the _call function)
+    18.09.2011 - bug fix in the controller names , file names are separated by underscore
+                 and the class name are Camel Case followed by "Controller"
+    02.10.2011 - Load plug-ins on the fly , when ever they are needed.
+
+    31.10.2011 - The plug-in architecture is changed , more code is pushed to to 
+                 plug-ins folder.
+    31.10.2011 - the new plug-in architecture is applied on the Membership 
+                 and Comments plug-ins. 
