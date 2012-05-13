@@ -46,7 +46,7 @@ class Load {
     }
 
     /**
-     * loads a helper class
+     * loads a helper class from the /helpers folder
      * @param type $name_ 
      */
     public static function helper($name_) {
@@ -57,13 +57,22 @@ class Load {
     }
 
     /**
-     * Loads a class from the lib folder
+     * Loads a class from the /lib folder
      * @param type $name_ 
      */
     public static function lib($name_) {
 
         if (!include_once BASE_DIR . "lib/" . $name_ . ".php") {
             die('lib not found');
+        }
+    }
+    /**
+     * Loads functions files from the /functions folder
+     * @param type $name_ 
+     */
+    public static function functions($name_) {
+        if (!include_once BASE_DIR . "functions/" . $name_ . ".php") {
+            die('functions not found');
         }
     }
 

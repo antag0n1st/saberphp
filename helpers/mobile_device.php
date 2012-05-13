@@ -2,7 +2,7 @@
 /**
  * Detects if the request is comming form a mobile device 
  */
-class Mobile {
+class MobileDevice {
     /**
      * Detects if the request is comming from a mobile device
      * and redirects if so , to the given url.
