@@ -22,8 +22,8 @@ class BlogCategory extends Model {
     private static $categories = array();
 
     public static function find_by_name($name) {
-        
-        return array_shift(static::find_by_sql("SELECT * FROM " . static::$table_name . " WHERE latin_name = '".Model::db()->prep($name)."' LIMIT 1 "));
+        $obj = static::find_by_sql("SELECT * FROM " . static::$table_name . " WHERE latin_name = '".Model::db()->prep($name)."' LIMIT 1 ");
+        return $obj ? array_shift($obj) : null;
     }
     
     public static function get_category_by_id($id){

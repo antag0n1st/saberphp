@@ -10,12 +10,8 @@ RewriteRule ^(.*)$ http://www.example.com/$1 [R=permanent,L]
 RewriteRule ^no-privileges$ no_privileges.php?%{QUERY_STRING}
 
 
-RewriteRule ^filmski-vesti/?([0-9]+)?$ index.php?controller=blog&action=main&cat=filmski-vesti&params=$1&%{QUERY_STRING}
-RewriteRule ^filmski-vesti/([a-zA-Z0-9_-]+)/([0-9]+)$ index.php?controller=blog&action=single&cat=filmski-vesti&params=$2&%{QUERY_STRING}
-
-RewriteRule ^top-listi/?([0-9]+)?$ index.php?controller=blog&action=main&cat=top-listi&params=$1&%{QUERY_STRING}
-RewriteRule ^top-listi/([a-zA-Z0-9_-]+)/([0-9]+)$ index.php?controller=blog&action=single&cat=top-listi&params=$2&%{QUERY_STRING}
-
+RewriteRule ^category-name/?([0-9]+)?$ index.php?controller=blog&action=main&cat=category-name&params=$1&%{QUERY_STRING}
+RewriteRule ^([a-zA-Z0-9_-]+)/category-name/([0-9]+)$ index.php?controller=blog&action=single&cat=category-name&params=$2&%{QUERY_STRING}
 
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9-]+)$ index.php?controller=$1&action=$2&%{QUERY_STRING}
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9_\/-]+)$ index.php?controller=$1&action=$2&params=$3&%{QUERY_STRING}

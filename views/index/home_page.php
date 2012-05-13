@@ -1,6 +1,6 @@
 <div class="container oa" >
     
-    <?php Load::view('elements/left_container'); ?>
+    <?php Load::view('elements/side_panel'); ?>
     
     <div class="column pad" style="width: 700px; background-color: #f2f2e6;">
         <p>SaberPHP is fast , easy to learn php framework that follows the MVC pattern.</p>

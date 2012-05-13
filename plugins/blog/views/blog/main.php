@@ -35,7 +35,7 @@
 </div>
 
 <div class="right-container">
-    <?php Load::view('elements/side-panel'); ?>
+    <?php Load::view('elements/side_panel'); ?>
 </div>
     
 </div>

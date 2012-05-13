@@ -41,7 +41,7 @@ class Load {
             }
         } else {
            // die('view not found');
-            echo 'view not found';
+            echo 'view <b>'."views/" . $name_.'</b> not found';
         }
     }
 

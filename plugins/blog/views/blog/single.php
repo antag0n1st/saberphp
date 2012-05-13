@@ -39,7 +39,7 @@
 </div>
 
     <div class="right-container">
-    <?php Load::view('elements/side-panel'); ?>
+    <?php Load::view('elements/side_panel'); ?>
     <h2><?php echo $category->category_name; ?></h2>
     <div class="separator"></div>
     <?php foreach ($posts as $post): ?>

@@ -34,8 +34,8 @@ class BlogController extends Controller {
             $duplicate_page = ' - Страна ' . $page;
         }
 
-        Head::instance()->title = $this->category->title . ' - mojtrener mk' . $duplicate_page;
-        Head::instance()->description = $this->category->description . ' - mojtrener mk' . $duplicate_page;
+        Head::instance()->title = $this->category->title . $duplicate_page;
+        Head::instance()->description = $this->category->description . $duplicate_page;
         Head::instance()->keywords = $this->category->keywords;
 
         Load::assign('posts', $posts);
@@ -64,7 +64,7 @@ class BlogController extends Controller {
 
         $posts = BlogPost::find_top_by_category($this->category->id, 8);
 
-        Head::instance()->title = $post->title . ' - mojtrener.mk';
+        Head::instance()->title = $post->title ;
         Head::instance()->description = str_replace(array('\'', '"'), '', $post->description);
         Head::instance()->keywords = $post->keywords;
 
