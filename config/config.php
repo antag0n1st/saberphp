@@ -42,7 +42,13 @@ if(HOST_ID == 1){
 }else if(HOST_ID == 0){
     // define connection in production mode
 }
-
+/**
+ * ======================================================
+ *                TURN CACHE ON/OFF
+ * ======================================================
+ */
+define('CACHING',true);
+define('CACHING_EXPIRATION_TIME', 10); // in secound
 /**
  * ======================================================
  *                      AUTOLOAD

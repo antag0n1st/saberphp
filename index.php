@@ -41,6 +41,30 @@ if(file_exists($plugin_dir_.'controllers/'.$controller_file_name.'.php')){
    URL::redirect('oops/error-404');
 }
 
-$layout ? include 'layouts/'.$layout.'.php' : null ;
+                $_yes_please_procced_with_caching = true;
+                //TODO handle the situations when the caching must not take place
+                // when the user is logged , or on pages where content changes frequently
+                // maybe add , custom exiration time for cirtin pages
+
+if(CACHING and $_yes_please_procced_with_caching){
+                
+    
+                ob_start();
+                ob_flush();
+                eval(" ?> " . file_get_contents(BASE_DIR .'layouts/'.$layout.'.php') . " <?php ");
+                $content = ob_get_contents();
+                ob_clean();
+                $_cached_file_name = $_SERVER["REQUEST_URI"];
+                $_cached_file_name = str_replace(array('\\','/',"'",'"'), '', $_cached_file_name);
+                $_cached_file_name .= '.tmp';
+                $handle = fopen(BASE_DIR.'cache/'.$_cached_file_name, 'w+');
+                fwrite($handle, $content);
+                fclose($handle);
+                echo $content;
+                // $content;
+}else{
+    $layout ? include BASE_DIR.'layouts/'.$layout.'.php' : null ;
+}
+
 
 ?>
