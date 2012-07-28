@@ -16,14 +16,16 @@ define('HOST_ID',1);
  * ======================================================
  * set BASE_URL and BASE_DIR for different environments
  */
+
+define('BASE_DIR', dirname(dirname(__FILE__)).'/');
+define('BASE_URL', "http://".$_SERVER['HTTP_HOST'].preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/');
+
+
 if(HOST_ID == 1){ // HAS TO END WITH A SLASH
-    define('BASE_URL', 'http://localhost/mvc/');
-    define('BASE_DIR', $_SERVER['DOCUMENT_ROOT'].'mvc/');
     date_default_timezone_set('Europe/Skopje');
 }else if(HOST_ID == 0){
-    define('BASE_URL', 'http://www.example.com/');
-    define('BASE_DIR', $_SERVER['DOCUMENT_ROOT'].'/');
     date_default_timezone_set('Europe/Skopje');
+    // defined('BASE_DIR') ? null : define('BASE_DIR', '/');
 }
 
 $_controller_default_name   = 'index';
@@ -47,7 +49,7 @@ if(HOST_ID == 1){
  *                TURN CACHE ON/OFF
  * ======================================================
  */
-define('CACHING',true);
+define('CACHING',false);
 define('CACHING_EXPIRATION_TIME', 10); // in secound
 /**
  * ======================================================

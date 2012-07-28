@@ -7,11 +7,13 @@
              <?php Head::instance()->display(); ?>
     </head>
     <body>   
+        <div class="wrapper">
              <?php Load::view('elements/header'); ?>
              <?php Load::view('elements/menu'); ?>
              <?php Controller::load_main_view(); ?> 
              <?php Load::view('elements/footer'); ?>
         
              <?php if(HOST_ID == 1){ Load::app('debug'); } ?>
+            </div>
     </body>
 </html>
