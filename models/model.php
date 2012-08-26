@@ -134,7 +134,7 @@ class Model{
     public function save($ignore = false) {
         // A new record won't have an id yet.
         $id = static::$id_name;
-        return isset($this->$id) ? $this->update() : $this->create($ignore);
+        return (isset($this->$id) and $this->$id) ? $this->update() : $this->create($ignore);
     }
 
     public function create($ignore) {

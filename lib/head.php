@@ -43,15 +43,15 @@ class Head {
      * name of the .js file that needs to be loaded
      * @param string $js_name only the name without the extension
      */
-    public function load_js($js_name){
-        $this->add('<script type="text/javascript" src="'.BASE_URL.'public/js/'.$js_name.'.js"></script> ');        
+    public function load_js($js_name,$version='1.0'){
+        $this->add('<script type="text/javascript" src="'.BASE_URL.'public/js/'.$js_name.'.js?version='.$version.'"></script> ');        
     }
     /**
      * name of the .css file that needs to be loaded
      * @param type $css_name only the name without the extension
      */
-    public function load_css($css_name){
-        $this->add('<link rel="stylesheet" href="'.BASE_URL.'public/css/'.$css_name.'.css" type="text/css" /> ');        
+    public function load_css($css_name,$version='1.0'){
+        $this->add('<link rel="stylesheet" href="'.BASE_URL.'public/css/'.$css_name.'.css?version='.$version.'" type="text/css" /> ');        
     } 
     /**
      * Add favicon 

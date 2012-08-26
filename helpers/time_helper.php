@@ -15,6 +15,16 @@ class TimeHelper
     {
         return date("Y-m-d H:i:s", strtotime( self::DatetimeInGMT() . " + 2 hours" ) );
     }
+    
+    static function DateAdjusted()
+    {
+        return date("Y-m-d", strtotime( self::DatetimeInGMT() . " + 2 hours" ) );
+    }
+    
+    public static function to_date($date_time){
+        return date('Y-m-d', strtotime($date_time));
+    }
+    
     static function DateTime(){
         return date("Y-m-d H:i:s");
     }
@@ -32,6 +42,17 @@ class TimeHelper
                 $hours_to_add = 1;
         }
         return date("Y-m-d H:i:s", strtotime( $date . " + $hours_to_add hours" ) );
+    }
+    
+    private static function convert_datetime($str) {
+
+    list($date, $time) = explode(' ', $str);
+    list($year, $month, $day) = explode('-', $date);
+    list($hour, $minute, $second) = explode(':', $time);
+
+    $timestamp = mktime($hour, $minute, $second, $month, $day, $year);
+
+    return $timestamp;
     }
     
     public static function RelativeTime($time, $now = false)

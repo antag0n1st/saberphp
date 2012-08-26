@@ -18,15 +18,16 @@ define('HOST_ID',1);
  */
 
 define('BASE_DIR', dirname(dirname(__FILE__)).'/');
-define('BASE_URL', "http://".$_SERVER['HTTP_HOST'].preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/');
-
-
-if(HOST_ID == 1){ // HAS TO END WITH A SLASH
-    date_default_timezone_set('Europe/Skopje');
-}else if(HOST_ID == 0){
-    date_default_timezone_set('Europe/Skopje');
-    // defined('BASE_DIR') ? null : define('BASE_DIR', '/');
+// define('BASE_URL', "http://".$_SERVER['HTTP_HOST'].preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/');
+if (HOST_ID == 0) {
+    define('BASE_URL', "http://example.com/");
+} else if (HOST_ID == 1) {
+    define('BASE_URL', "http://localhost/mvc/");
+} else if (HOST_ID == 2) {
+    define('BASE_URL', "http://test.example.com/");
 }
+
+date_default_timezone_set('Europe/Skopje');
 
 $_controller_default_name   = 'index';
 $_controller_default_action = 'main';
