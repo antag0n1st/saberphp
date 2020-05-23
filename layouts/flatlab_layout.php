@@ -40,12 +40,6 @@
         <script src="<?php echo URL::abs('public/flatlab/js/jquery.nicescroll.js'); ?>" type="text/javascript"></script>
         <script src="<?php echo URL::abs('public/flatlab/js/respond.min.js'); ?>" ></script>
         <script src="<?php echo URL::abs('public/flatlab/assets/toastr-master/toastr.js'); ?>"></script>
-        <script src="<?php echo URL::abs('public/flatlab/assets/jquery-knob/js/jquery.knob.js'); ?>"></script>
-       
-        <script src="<?php echo URL::abs('public/flatlab/assets/bootstrap-datepicker/js/bootstrap-datepicker.js'); ?>"></script>
-       
-        <!--bootstrap-switch-->
-        <script src="<?php echo URL::abs('public/flatlab/assets/bootstrap-switch/static/js/bootstrap-switch.js'); ?>"></script>
 
         <script src="<?php echo URL::abs('public/flatlab/assets/select2/js/select2.min.js'); ?>"></script>
 
