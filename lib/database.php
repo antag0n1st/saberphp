@@ -14,9 +14,17 @@ class Database {
     public $result;
     public $mysql_affected_rows = -2;
     private static $queries = array();
+    
+    private $search = array("\x00","\\", "'", "\"", "\x1a");
+    private $replace = array("\\x00","\\\\", "\'", "\\\"", "\\\x1a");
 
     public function __construct() {
         $this->open_connection();
+        
+        if(HOST_ID !== 0){
+            $this->query('set global SQL_MODE="NO_ENGINE_SUBSTITUTION"');
+        }
+        
     }
     
     public function __destruct() {
@@ -25,12 +33,13 @@ class Database {
     
     private function open_connection() {
         if (!Database::$con) {
-            Database::$con = mysql_connect($this->hostname, $this->username, $this->password);
+            Database::$con = mysqli_connect($this->hostname, $this->username, $this->password);
             if (!Database::$con) {
-                die('Could not connect: ' . mysql_error());
+				die('Could not connect to Database');
+                // die('Could not connect: ' . mysqli_error(Database::$con));
             }
-            mysql_select_db($this->dbname, Database::$con);
-            mysql_query("SET NAMES 'utf8'");
+            mysqli_select_db(Database::$con,$this->dbname);
+            mysqli_query(Database::$con,"SET NAMES 'utf8'");
         }
     }
     /**
@@ -38,18 +47,18 @@ class Database {
      * @param type $db_name 
      */
     public function change_db($db_name){
-        mysql_select_db($db_name, Database::$con);
+        mysqli_select_db(Database::$con,$db_name);
     }
     /**
      * It reverts the connection to the default database used 
      */
     public function change_db_to_default(){
-        mysql_select_db($this->dbname, Database::$con);
+        mysqli_select_db(Database::$con,$this->dbname);
     }
     
     private function close_connection() {
         if (!Database::$con) {
-            mysql_close(Database::$con);
+            mysqli_close(Database::$con);
             Database::$con = null;
         }
     }
@@ -59,7 +68,7 @@ class Database {
      * @return array 
      */
     public function fetch_array($result) {
-        return mysql_fetch_array($result);
+        return mysqli_fetch_array($result);
     }
     /**
      * mysql_fetch_assoc wrapper
@@ -67,13 +76,17 @@ class Database {
      * @return array 
      */
     public function fetch_assoc($result) {
-        return mysql_fetch_assoc($result);
+        return mysqli_fetch_assoc($result);
+    }
+    
+    public function fetch_object($result) {
+        return mysqli_fetch_object($result);
     }
 
     private function execute() {
         $this->open_connection();
         $msc = microtime(true);
-        $this->result = mysql_query($this->sql) or die("MySQL ERROR: " . mysql_error() . " QUERY: " . $this->sql);
+        $this->result = mysqli_query(Database::$con,$this->sql) or die("MySQL ERROR: " . mysqli_error(Database::$con) . " QUERY: " . $this->sql);
         $msc = microtime(true) - $msc;
         self::$queries[] = array('query' => $this->sql, 'time' => $msc);
     }
@@ -88,7 +101,7 @@ class Database {
         }
         $this->sql = $query;
         $this->execute();
-        $this->mysql_affected_rows = mysql_affected_rows();
+        $this->mysql_affected_rows = mysqli_affected_rows(Database::$con);
 
         return $this->result;
     }
@@ -113,7 +126,7 @@ class Database {
      * @return type 
      */
     public function last_inserted_id() {
-        return mysql_insert_id();
+        return mysqli_insert_id(Database::$con);
     }
     /**
      * Prevents SQL Injection
@@ -122,10 +135,9 @@ class Database {
      */
     public function prep($value) {
 
-        $search = array("\x00", "\n", "\r", "\\", "'", "\"", "\x1a");
-        $replace = array("\\x00", "\\n", "\\r", "\\\\", "\'", "\\\"", "\\\x1a");
+        
 
-        return str_replace($search, $replace, $value);
+        return str_replace($this->search, $this->replace, $value);
     }
     /**
      * Returns all the queries logged 

@@ -20,6 +20,15 @@ class URL{
     public static function image($name_){
         return BASE_URL.'images/'.$name_;
     }
+    
+    /**
+     * absolute path pointing to /public/img/
+     * @param type $name_
+     * @return type 
+     */
+    public static function img($name_){
+        return BASE_URL.'img/'.$name_;
+    }
     /**
      * get the base url
      * @return string 
@@ -34,6 +43,20 @@ class URL{
     public static function redirect($url){
         header('Location: '.BASE_URL.$url);
         exit;
+    }
+    
+    public static function redirect_to_refferer(){
+        if(isset($_SERVER['HTTP_REFERER']) and $_SERVER['HTTP_REFERER']){
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+        exit;
+        }
+    }
+    
+     public static function get_refferer(){
+        if(isset($_SERVER['HTTP_REFERER']) and $_SERVER['HTTP_REFERER']){
+          return $_SERVER['HTTP_REFERER'];
+        }
+        return '';
     }
     /**
      * gets the IP address of user requesting a page

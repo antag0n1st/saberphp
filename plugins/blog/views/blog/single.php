@@ -1,60 +1,132 @@
-<div class="container o" style="padding-top: 30px;" >
-<div class="left-container o">
-    <h2><?php /* @var $post BlogPost */ echo $post->title; ?></h2>
-    <div class="separator"></div>
-    <span class="blog-date">Објавено на: <?php echo Date::format($post->date_created); ?></span>
-    <div class="blog-post"><?php echo $post->post; ?></div>
+<div class="container o">
     
-
-    <div style="margin-top: 20px; margin-bottom: 20px;">
-        <div id="fb-root"></div>
+    <div class="left">
+        <h2>
+            <?php /* @var $post BlogPost */ 
+            if(Membership::instance()->user->user_level >= 4){
+                //echo $post->title; 
+                echo '<a href="'.URL::abs('admin-posts/edit-post/'.$post->id).'">';
+                echo '<img src="'.URL::image('edit.png').'" style="margin-right:5px;" />';
+                echo $post->title.'</a>';
+            }else{
+                echo $post->title; 
+            }
             
-                <script type="text/javascript">
-                    //<![CDATA[    
-                    document.write('<fb:like href="<?php echo URL::current_page_url(); ?>" send="false" width="450" show_faces="true" font="arial"></fb:like>');
-                    (function(d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) {return;}
-                        js = d.createElement(s); js.id = id;
-                        js.src = "//connect.facebook.net/mk_MK/all.js#xfbml=1";
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }(document, 'script', 'facebook-jssdk'));
-                    //]]>
-                </script>
-
-    </div>
-    <?php if(isset($author)): ?>
-    <div class="rounded-10 profile">
-        <img alt="" src="<?php echo $author->image_url; ?>" />
-        <span>Напишано од </span>
-        <h2><?php echo $author->full_name; ?></h2>
-        <p> <?php echo $author->bio; ?> </p>
+            /* @var $category BlogCategory */ ?>
+        </h2>
         
-    </div>
-    <?php endif; ?>
-    <h2>Коментари:</h2>
-    <br />
-    <?php echo $comments; ?>
-    <br />
-</div>
+        <span class="blog-date">Објавено на: <?php echo Date::format($post->release_date); ?></span>
+        <span class="blog-date" style="margin-right: 10px;"> во <a href="<?php echo URL::abs($category ? $category->latin_name : ''); ?>"><?php echo $category ? $category->category_name : ''; ?></a></span>
+        
+          
 
-    <div class="right-container">
-    <?php Load::view('elements/side_panel'); ?>
-    <h2><?php echo $category->category_name; ?></h2>
-    <div class="separator"></div>
-    <?php foreach ($posts as $post): ?>
-        <div class="latest-post">
-            <a href="<?php echo URL::abs( $post->permalink . '/'.$category->latin_name . '/' . $post->id); ?>">
-                <img style="width: 50px;" alt="" src="<?php echo $post->thumbnail_image_url; ?>" />
+            <script type="text/javascript">
+                //<![CDATA[    
+                document.write('<fb:like href="<?php echo URL::abs($post->permalink.'/'.$post->id); ?>" send="true" layout="button_count" width="130" show_faces="false" ></fb:like>');
+                //]]>
+            </script>
+            
+            <a href="http://www.facebook.com/sharer.php?u=<?php echo urlencode(URL::abs($post->permalink.'/'.$post->id)); ?>" target="_blank" rel="nofollow" style="margin-right: 5px;text-decoration: none;border: none;" >
+                <img alt="facebook share" src="<?php echo URL::image('share.png'); ?>">
             </a>
-            <h3>
-                <a href="<?php echo URL::abs( $post->permalink . '/'.$category->latin_name . '/' . $post->id); ?>">
-                    <?php echo $post->title; ?>
-                </a>
-            </h3>
+            
+            
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="ladymk_info">Tweet</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+       
+        <div class="separator dashed"></div>
+        <div class="blog-post o"><?php echo $post->post; ?></div>
+
+
+        <div style="margin-top: 20px; margin-bottom: 20px; position: relative;">
+          
+
+            <script type="text/javascript">
+                //<![CDATA[    
+                document.write('<fb:like href="<?php echo URL::abs($post->permalink.'/'.$post->id); ?>" send="true" layout="button_count" width="130" show_faces="false" ></fb:like>');
+                //]]>
+            </script>
+            
+            <a href="http://www.facebook.com/sharer.php?u=<?php echo urlencode(URL::abs($post->permalink.'/'.$post->id)); ?>" target="_blank" rel="nofollow" style="margin-right: 5px;text-decoration: none;border: none;" >
+                <img alt="facebook share" src="<?php echo URL::image('share.png'); ?>">
+            </a>
+            
+            
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="ladymk_info">Tweet</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+            <span style="float: right;">
+                <script type="text/javascript">
+                //<![CDATA[    
+                document.write('<fb:like-box href="http://www.facebook.com/pages/Ladymk/137461013013771" width="170" show_faces="false" stream="false" header="false"></fb:like-box>');
+                //]]>
+            </script>
+            </span>
+            
+            
+            
         </div>
-        <div class="separator"></div>
-    <?php endforeach; ?>
+        <?php if ($post->is_author_visible): //if(isset($author)): ?>
+            <div class="rounded-10 profile">
+                <img alt="" src="<?php echo $author->image_url; ?>" />
+                <span>Напишано од </span>
+                <h2><?php echo $author->full_name; ?></h2>
+                <p> <?php echo $author->bio; ?> </p>
+
+            </div>
+        <?php endif; ?>
+        <div>
+            <h2 style="margin-bottom: 10px;">Може да ве интересира и:</h2>
+            <div class="separator"></div>
+            <div class="related-items">
+                <?php foreach($related_posts as $p): ?>
+                <div class="item">
+                    <div class="frame">
+                        <a href="<?php echo URL::abs($p->permalink.'/'.$p->id); ?>">
+                            <img style="<?php echo $p->thumbnail_attribute; ?>" alt="" src="<?php echo URL::abs('public/uploads/large-thumbnails/'.$p->thumbnail_image_url); ?>" />
+                        </a>
+                    </div>
+                    <h3>
+                        <a href="<?php echo URL::abs($p->permalink.'/'.$p->id); ?>">
+                        <?php echo $p->title; ?>
+                        </a>
+                    </h3>
+                </div>
+                <?php endforeach; ?>
+                
+            </div>
+            
+            
+        </div>
+        <div class="o" style="margin: 10px auto 10px auto;">
+            Тагови:
+            <?php $tags = explode(',', $post->keywords);
+           
+            $tags_data = array();
+            foreach($tags as $tag){
+                $tags_data[] = " <a href='".URL::abs('tag/'.  urlencode(trim($tag))."'>".trim($tag)."</a>");
+            }
+            
+            echo implode(',', array_values($tags_data));
+            ?>
+        </div>
+        
+        <h2 style="margin-bottom: 0px; margin-top: 15px;">Коментари:</h2>
+        
+        <?php echo $comments; ?>
+    </div>
+    
+    
+    <div class="right">
+        
+        <?php Load::view('elements/side_panel'); ?>
+
+    </div>
+    
     
 </div>
-    </div>
+
+
+
+

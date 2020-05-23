@@ -1,14 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:og="http://opengraphprotocol.org/schema/"
-      xmlns:fb="http://www.facebook.com/2008/fbml"
-      >
-    <head>
-        <title>Page not found 404</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    </head>
-    <body>
-        <h1>Page not found ERROR-404</h1>
-        <p>Please go to the main page <a href="<?php echo URL::abs(''); ?>">Homepage</a></p>        
-    </body>
-</html>
+<div class="ia-col-12">
+    <div id="content" class="content">
+        <div class="ia-row">
+            <div class="ia-col-12">
+                <div id="content" class="hfeed content">
+                    <div class="ia-row">
+                        <div class="ia-col-12 standard">
+
+                            <article class="page type-page status-publish hentry">
+
+                                <header class="entry-header main_color_border_bottom">
+                                    <h1 class="entry-title main_color">
+                                        Ooooops!                                             
+                                    </h1>
+                                </header>
+
+                                <div class="entry-content">
+                                    <p>Looks like the page you are looking does not exists anymore.</p>
+
+                                    <p>Please go to the main page <a href="<?php echo URL::abs(''); ?>">Homepage</a></p>   
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

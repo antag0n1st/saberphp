@@ -1,0 +1,59 @@
+/* This stylesheet is used to style the public view of the plugin. */
+
+#ia-cookie-choices {
+	position: relative;
+	padding: 6px;
+	text-align: center;
+	width: 100%;
+	display: block;
+	z-index: 3;
+	font-size: 0.85em;
+	line-height: 1.3em;
+	box-sizing: border-box;
+}
+#ia-cookie-choices-button {
+	padding: 2px 6px;
+	margin-left: 10px;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+#ia-cookie-choices-mobile {
+	position: relative;
+	padding: 6px;
+	text-align: center;
+	width: 100%;
+	display: none;
+	z-index: 3;
+	box-sizing: border-box;
+}
+#ia-cookie-choices-mobile-button {
+	padding: 2px 6px;
+	margin-left: 10px;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+
+/* Mobile portrait mode */
+@media (max-width: 767px) {
+
+	#ia-cookie-choices {
+		display: none;
+	}
+	#ia-cookie-choices-mobile {
+		display: block;
+	}
+	
+}
+/* Mobile lendscape mode */
+@media (max-width: 767px) and (orientation : landscape) {
+	
+	#ia-cookie-choices {
+		display: none;
+	}
+	#ia-cookie-choices-mobile {
+		display: block;
+	}
+	
+}

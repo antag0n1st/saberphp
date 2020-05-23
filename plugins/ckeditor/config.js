@@ -15,16 +15,17 @@ CKEDITOR.editorConfig = function( config )
         config.toolbar = 'MyToolbar';
         config.toolbar_MyToolbar =
 	[
-                { name: 'document', items : [ 'Source'] },
+                { name: 'document', items : [ 'Source','Maximize', 'ShowBlocks'] },
                 '/',
                 { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
                 { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote',
                 '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
                 '/',                
                 { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar' ] },               
-                { name: 'tools', items : [ 'Maximize', 'ShowBlocks' ] } ,
+              
                 { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] } , 
                 { name: 'links', items : [ 'Link','Unlink'] } , 
+                 { name: 'colors', items : [ 'TextColor','BGColor' ] },
                 { name: 'styles', items : [ 'Format','FontSize' ] }
         ];
         

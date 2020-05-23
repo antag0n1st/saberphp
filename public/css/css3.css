@@ -1,0 +1,25 @@
+#scrollbarbox
+{
+    background:#fff;	border:1px solid #000;	margin-left:-90px;				padding:5px;    	display: block;
+    margin-top: 0;
+    position: absolute;
+}
+#scrollbarbox table,#scrollbarbox table td
+{
+    background:transparent !important;
+    border:none !important;
+    padding:0px !important;
+    margin:0px !important;
+}
+.sharebarbtn
+{
+    line-height:1;
+}
+.sharebarbtn{padding:0px;}    
+
+div.sbpinned 
+{
+    position: fixed !important;
+    z-index: 9999;
+    top: 50px;
+}

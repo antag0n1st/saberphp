@@ -1,0 +1,38 @@
+
+ul.tagit {
+    width: 345px;
+    float: right;
+    
+}
+
+#tag-icon {
+    float: left;
+    margin-right: 1.4em;
+    position: relative;
+    top: .1em;
+}
+#title-jquery, #title-tag-it {
+    display: block;
+}
+#title-tag-it {
+    /*font-size: 1.0em;*/
+}
+#title-jquery {
+    /*font-size: .75em;*/
+    font-weight: normal;
+    position: relative;
+    left: .2em;
+    top: .1em;
+}
+#feature-list {
+    margin-top:2.5em;
+}
+
+#disqus-container {
+    margin-top: 2em;
+}
+#disqus-container h3 {
+    /*font-size: 1em;*/
+    font-family: inherit;
+}
+

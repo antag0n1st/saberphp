@@ -38,6 +38,18 @@ class Model{
        
         return $object_array;
     }
+    
+    public static function find_by_row($sql="") {
+        
+        $result_set = Model::db()->query($sql);       
+        $object_array = array();
+        while ($row = Model::$db->fetch_assoc($result_set)) {
+            $object_array[] = $row;
+        }
+       
+        return $object_array;
+    }
+    
     public static function join($model_name , $query ='' , $limit = 0){
         
         $result_set = Model::db()->query($query); 
@@ -148,6 +160,9 @@ class Model{
         $sql .= ") VALUES ('";
         $sql .= join("', '", array_values($attributes));
         $sql .= "')";
+        
+        $sql = str_replace("'NULL'", "NULL", $sql);
+        
         if (Model::db()->query($sql)) {
             $id = static::$id_name;
             $this->$id = Model::$db->last_inserted_id();

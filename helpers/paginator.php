@@ -51,9 +51,9 @@ class Paginator {
         return $query . " LIMIT " . $this->offset() . " , " . $this->per_page . " ";
     }
 
-    public function build_pagination_html() {
+    public function display($view = 'elements/flatlab_paginator') {
         Load::assign('paginator', $this);
-        Load::view('elements/paginator');
+        Load::view($view);
     }
 
 }

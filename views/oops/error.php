@@ -12,6 +12,36 @@
         text-align: left;
     }
 </style>
-<div class="warning" style="background-image: url('<?php echo URL::image('warning.png'); ?>')">   
+<style type="text/css"> 
+    .error-buffer{ 
+        width:600px;
+        height:400px;
+        position:fixed;
+        z-index:10000000000;
+        left:50%;
+        top:50%;
+        margin-left:-300px;
+        margin-top:-200px;
+        overflow-y: scroll; 
+        overflow-x: hidden;
+        background-color: #252a2e;
+        border:2px solid black;
+        padding:20px;
+        border-radius:5pt;
+    }
+</style>
+
+<div class="error-buffer">
+    <div class="btn btn-xs btn-danger" id="close-error" style="position:absolute;right:0; top:0; margin:5px; ">
+        x
+    </div>
+    <script type='text/javascript' >
+        $('#close-error').click(function () {
+            $('.error-buffer').hide();
+        });
+    </script>
+    <h2 style='color:white;'>There where some Warnings/Errors</h2>
+
     <?php echo $_error_message; ?>    
+
 </div>

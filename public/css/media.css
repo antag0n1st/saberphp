@@ -1,0 +1,303 @@
+/*
+    Media css styles
+*/
+
+
+/* Mobile portrait mode */
+@media (max-width: 767px) {
+	body {
+		font-size: 13px;
+	}
+	
+	.ia-wrap {
+		width: 100%;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+	
+	.ia-ver-div {
+		margin-left: 12px;
+		margin-right: 12px;
+	}
+	
+	
+	/**
+	* Mobile Header ================================================================================================
+	*/
+	#ia-mobile-header-wrap {
+		display: block;
+	}
+
+
+
+	/**
+	* Header ================================================================================================
+	*/
+	.ia-main-header {
+		display: none;
+	}
+	#top-header-area {
+		display: block;
+	}
+	#tagline {
+		display: block;
+		text-align: center;
+	}
+	#title-logo-widget-area {
+		display: block;
+		min-height: auto;
+	}
+	#logo-title-area {
+		display: block;
+	}
+	#title {
+		display: block;
+		white-space: normal;
+		font-size: 1.6em;
+		text-align: center;
+	}
+	#site-logo {
+		display: block;
+		white-space: normal;
+		font-size: 1.6em;
+		text-align: center;
+	}
+	
+	
+	/**
+	* Main ================================================================================================
+	*/
+	#main {
+		padding-bottom: 50px;
+	}
+	.main p {
+		font-size: 1.25em;
+		line-height: 1.5em;
+	}
+	.content ol li {
+		font-size: 1.25em;
+		line-height: 1.5em;
+	}
+	.content ul li {
+		font-size: 1.25em;
+		line-height: 1.5em;
+	}
+	
+	.main-header .widget-area {
+		width: 100%;
+		height: auto;
+	}
+	.main-header .widget-area .widget_ia_responsive_ads img {
+		width: 100%;
+		height: auto;
+	}
+	
+	#main-menu {
+		display: none;
+	}
+	#top-menu {
+		display: none;
+	}
+	
+	#ia-main-slider-container {
+		display: none;
+	}
+
+
+	.footer {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+	
+	.ia-col-1,
+	.ia-col-2,
+	.ia-col-3,
+	.ia-col-4,
+	.ia-col-5,
+	.ia-col-6,
+	.ia-col-7,
+	.ia-col-8,
+	.ia-col-9,
+	.ia-col-10,
+	.ia-col-11,
+	.ia-col-12 {
+		float: none;
+		width: 100%;
+	}
+	
+	.ia-row {
+	}
+	.widget_ia_carousel {
+		display: none;
+	}
+	
+	
+	#author-avatar {
+		float: none;
+		margin-left: auto;
+		margin-right: auto;
+		width: 96px;
+		height: 96px;
+	}
+	#author-avatar img {
+		display: block;
+	}
+	#author-description {
+		margin-left: 0px;
+	}
+	#author-description h2 {
+		padding: 0;
+		text-align: center;
+		padding-top: 0.5em;
+	}
+
+
+	.standard .entry-content {
+		overflow: hidden;
+	}
+	.standard .entry-top-image {
+		width: 100%;
+		height: auto;
+	}
+	.standard .entry-top-image img {
+		margin-top: 0px;
+	}
+	
+	
+	#comments ol li ol {
+		padding-left: 24px;
+	}
+	#comments ol li ol li ol {
+		padding-left: 24px;
+	}
+
+}
+/* Mobile lendscape mode */
+@media (max-width: 767px) and (orientation : landscape) {
+	.ia-wrap {
+		width: 100%;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+	
+	.vertical-divider {
+		margin-left: 12px;
+		margin-right: 12px;
+	}
+	#main {
+		border: none;
+		padding: 24px 10px;
+	}
+	.main p {
+		font-size: 1.25em;
+		line-height: 1.5em;
+	}
+	.nav {
+		display: none;
+	}
+	.mobile-header1 {
+		display: block;
+	}
+	#title-area .widget_ia_responsive_ads img {
+		width: 100%;
+		height: auto;
+	}	
+		
+	.ia-col-1,
+	.ia-col-2,
+	.ia-col-3,
+	.ia-col-4,
+	.ia-col-5,
+	.ia-col-6,
+	.ia-col-7,
+	.ia-col-8,
+	.ia-col-9,
+	.ia-col-10,
+	.ia-col-11,
+	.ia-col-12 {
+		float: none;
+		width: 100%;
+	}
+
+	
+	.ia-col-3.type3,
+	.ia-col-4.type3,
+	.ia-col-6.type3,
+	.ia-col-12.type3 {
+		float: left;
+		width: 50%;
+	}
+
+	.type3:nth-child(3n+4) {
+		clear: none;
+	}	
+	.type1:nth-child(2n+3),
+	.type2:nth-child(2n+3),
+	.type3:nth-child(2n+3) {
+		clear: both;
+	}
+	
+	.widget_ia_carousel {
+		display: none;
+	}
+	
+	#comments ol li ol {
+		padding-left: 24px;
+	}
+	#comments ol li ol li ol {
+		padding-left: 24px;
+	}
+}
+
+/* iPad portrait mode */
+@media (min-width: 768px) and (max-width: 991px) {
+	body {
+		font-size: 13px;
+	}
+	.ia-wrap {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 24px;
+	}
+
+
+	
+
+
+}
+/* iPad lendscape mode */
+@media (min-width: 992px) and (max-width: 1199px) {
+	body {
+		font-size: 13px;
+	}
+	.ia-wrap {
+		width: 990px;
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}
+
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+	body {
+		font-size: 14px;
+	}
+	.ia-wrap {
+		width: 990px;
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}
+
+@media (min-width: 1400px) and (max-width: 1649px)  {
+	body {
+		font-size: 15px;
+	}
+}
+
+@media (min-width: 1650px) {
+
+}
+
+
+

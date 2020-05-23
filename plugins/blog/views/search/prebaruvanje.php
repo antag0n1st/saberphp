@@ -1,40 +1,41 @@
-<div class="container o" style="padding-top: 30px;" >
+<div class="container o" style="background-color: white;" >
     
-    <div class="left-container">
+    <div class="left">
     <h2>Резултати од Пребарувањето</h2>
     <div class="separator"></div>
-    <br />
-    <?php foreach($posts as $post): /* @var $post BlogPost */ ?>
-        <div class="item-wrapper">
-            <h2>
-                <a href="<?php echo URL::abs($post->permalink.'/'.BlogCategory::get_category_by_id($post->blog_categories_id).'/'.$post->id); ?>"><?php echo $post->title; ?></a>
-            </h2>
-            <div class="separator w"></div>
+    
+      <div class="home-items-container">
+
+            <?php $br=0; foreach($posts as $post): $br++; /* @var $post BlogPost */ ?>
             
+            <?php echo ($br%2==1) ? '<div class="wrap">' : ''; ?>
+                <div class="item">
+                    <div class="frame">
+                        <a href="<?php echo URL::abs($post->permalink.'/'.$post->id); ?>">
+                            <img style="<?php echo $post->thumbnail_attribute; ?>" alt="" src="<?php echo URL::abs('public/uploads/'.$post->thumbnail_image_url); ?>" />
+                        </a>
+                    </div>
+                    <h3>
+                        <a href="<?php echo URL::abs($post->permalink.'/'.$post->id); ?>">
+                        <?php echo $post->title; ?>
+                        </a>
+                    </h3>
+                    <p><?php echo $post->description; ?></p>
+                </div>
+            <?php echo ($br%2==0) ? '</div>' : ''; ?>
+            <?php endforeach; ?>
+        
+            <?php echo ($br%2==1) ? '</div>' : ''; ?>
             
-            <div class="thumbnail-wraper" >
-                <div class="thumbnail-image" style="height: 150px;">
-                    <a style="height: 145px;" href="<?php echo URL::abs($post->permalink.'/'.BlogCategory::get_category_by_id($post->blog_categories_id).'/'.$post->id); ?>">
-                    <img style="width: 220px;" alt="" src="<?php echo $post->thumbnail_image_url; ?>" /></a> 
-            </div>
-            </div>
-            <p>
-                <?php echo $post->description; ?>
-            </p>
-            <div class="button-link">
-                <a href="<?php echo URL::abs($post->permalink.'/'.BlogCategory::get_category_by_id($post->blog_categories_id).'/'.$post->id); ?>">Прочитај Повеќе</a>
-            </div>
-        </div>
-        <div class="separator w"></div>
-<?php endforeach; ?> 
+     </div>
         <?php if (empty($posts)): ?>
         <h3>Не беа пронајдени резултати за "<b><?php echo $word; ?></b>"</h3>
         <?php endif; ?>
     
 </div>
 
-<div class="right-container">
-    <?php Load::view('elements/side-panel'); ?>
+<div class="right">
+    <?php Load::view('elements/side_panel'); ?>
 </div>
     
 </div>

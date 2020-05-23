@@ -60,7 +60,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseUrl = BASE_URL.'public/';
+$baseUrl = BASE_URL.'public/uploads/';
 
 /*
 $baseDir : the path to the local directory (in the server) which points to the
@@ -79,7 +79,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseDir = resolveUrl($baseUrl);
+$baseDir = BASE_DIR.'public'.DS.'uploads'.DS; //.'statii'.DS;
 
 /*
  * ### Advanced Settings
@@ -104,8 +104,8 @@ Set the maximum size of uploaded images. If an uploaded image is larger, it
 gets scaled down proportionally. Set to 0 to disable this feature.
 */
 $config['Images'] = Array(
-		'maxWidth' => 1600,
-		'maxHeight' => 1200,
+		'maxWidth' => 632,
+		'maxHeight' => 800,
 		'quality' => 80);
 
 /*
@@ -137,14 +137,14 @@ $config['AccessControl'][] = Array(
 		'folder' => '/',
 
 		'folderView' => true,
-		'folderCreate' => false,
-		'folderRename' => false,
-		'folderDelete' => false,
+		'folderCreate' => true,
+		'folderRename' => true,
+		'folderDelete' => true,
 
 		'fileView' => true,
 		'fileUpload' => true,
-		'fileRename' => false,
-		'fileDelete' => false);
+		'fileRename' => true,
+		'fileDelete' => true);
 
 /*
 For example, if you want to restrict the upload, rename or delete of files in
