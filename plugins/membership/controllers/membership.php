@@ -1,5 +1,7 @@
 <?php
 
+
+
 class MembershipController extends Controller {
 
     function __construct() {
@@ -7,63 +9,53 @@ class MembershipController extends Controller {
         $view = null;
     }
 
-    public function logout(){
-        
-        unset($_SESSION['logged_user']);
-        
-        session_destroy();
-        
-        if(isset ($this->user)){
-        if($this->user->login_type == User::$FACEBOOK){
-            if(!$this->facebook){
-                $this->initFacebook();
-            }
-            
-        }}else{
-                        header('Location:  '.$_SERVER['HTTP_REFERER']);
-                        exit;
-        }
-        
+    public function logout() {
+
+        Membership::instance()->clear_user_data();
+
+        if( isset($_SERVER['HTTP_REFERER']) )
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+        else
+            header('Location: /api/admin');
+        exit;
     }
 
-    public function login($lt = 'facebook') {
+    public function login($lt = 'standard') {
+        if ($lt == 'standard') {
+            if (isset($_POST) and $_POST) {
+                /* @var $user User */
+                $user = User::find_user($this->get_post('username'), $this->get_post('password'));
 
-        //TODO check for the login type
-        if ($lt == 'facebook') {
+                if ($user) {
 
-            Load::plugin_model('membership', 'facebook/base_facebook');
-            Load::plugin_model('membership', 'facebook/facebook');
+               
+                    $user->session_id = Strings::GUID();
+                    $user->last_logged_at = TimeHelper::DateTimeAdjusted();
+                    $user->login_count++;
+                    $user->save();
 
+                    // safly remove the password so that it is not stored
+                    $user->password_2 = null;
 
-            $membership = new Membership();
-            $membership->redirect_url = $_GET['redirect_url'] . '?login=facebook';
-            $membership->initFacebook();
-            $membership->facebookLoginCheck();
-
-            header("Location: " . $membership->loginUrl);
+                    //Membership::instance()->storeUserToSession($user);
+                   // Membership::instance()->store_user_to_cookie($user);
+                } else {
+                    
+                    $error_message = urlencode('Authentication Failed');
+                    echo $_SERVER['HTTP_REFERER']."?_error=".$error_message;
+                    exit;
+                    header('Location:  ' . $_SERVER['HTTP_REFERER']."?_error=".$error_message);
+                    exit;
+                }
+                
+            }
+            
+            header('Location:  ' . $_SERVER['HTTP_REFERER']);
             exit;
         }
     }
-
-    public function login_anonymous() {
-        if (isset($_POST) and $_POST) {
-
-            $user = new User();
-            $user->id = -1;
-            $user->login_type = User::$ANONYMOUS;
-            $user->user_level = 1;
-            $user->username = $_POST['user-name'];
-            $user->image_url = URL::abs('plugins/membership/images/' . $_POST['select-image'] . '.jpg');
-            Membership::instance()->storeUserToSession($user);
-            // current_page
-            if (isset($_SESSION['previous_page'])) {
-                header("Location: " . $_SESSION['previous_page']);
-                exit;
-            }
-        }
-        header('Location:  '.$_SERVER['HTTP_REFERER']);
-        exit;
-    }
+    
+    
 
 }
 

@@ -1,0 +1,89 @@
+<?php
+
+Load::script('controllers/admin');
+
+class {controler} extends AdminController {
+
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function main($page_id = 1) {
+        $this->listing($page_id);
+    }
+
+    public function listing($page_id = 1) {
+
+        $this->set_view('list');
+        $this->set_menu('{url}');
+
+        Load::model('{model_name}');
+
+        $paginator = new Paginator(0, $page_id, 30, '{url}/listing/');
+        ${entities} = {model}::find_all($paginator);
+
+        Load::assign('{entities}', ${entities});
+        Load::assign('paginator', $paginator);
+    }
+
+    public function add() {
+
+        $this->set_view('add');
+        $this->set_menu('{url}');
+
+        if (isset($_POST) and $_POST) {
+
+            Load::model('{model_name}');
+
+            ${model_name} = new {model}();
+            
+            {post_fields}
+
+            ${model_name}->save();
+
+            $this->set_confirmation('New Entity Created');
+
+            URL::redirect('{url}');
+        }
+    }
+
+    public function edit($id) {
+
+        $this->set_view('add');
+        $this->set_menu('{url}');
+
+        Load::model('{model_name}');
+
+        ${model_name} = {model}::find_by_id($id);
+
+        if (isset($_POST) and $_POST) {
+
+            {post_fields}
+
+            ${model_name}->save();
+
+            $this->set_confirmation('Updated');
+
+            URL::redirect('{url}');
+        }
+
+        Load::assign('{model_name}', ${model_name});
+        
+    }
+
+    public function delete($id) {
+
+        $this->no_layout();
+
+        Load::model('{model_name}');
+
+        ${model_name} = new {model}();
+        ${model_name}->id = $id;
+
+        ${model_name}->delete();
+
+        URL::redirect_to_refferer();
+    }
+
+}
+

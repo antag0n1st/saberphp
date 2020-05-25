@@ -21,9 +21,9 @@ class Database {
     public function __construct() {
         $this->open_connection();
         
-        if(HOST_ID !== 0){
-            $this->query('set global SQL_MODE="NO_ENGINE_SUBSTITUTION"');
-        }
+//        if(HOST_ID !== 0){
+//            $this->query('set global SQL_MODE="NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES"');
+//        }
         
     }
     
@@ -134,9 +134,6 @@ class Database {
      * @return type 
      */
     public function prep($value) {
-
-        
-
         return str_replace($this->search, $this->replace, $value);
     }
     /**

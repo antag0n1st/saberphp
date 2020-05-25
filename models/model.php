@@ -1,10 +1,47 @@
 <?php
+
+
+
+require BASE_DIR."lib/ClanCats/Hydrahon/Builder.php";
+
+
+require BASE_DIR."lib/ClanCats/Hydrahon/BaseQuery.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql.php";
+
+
+
+require BASE_DIR."lib/ClanCats/Hydrahon/TranslatorInterface.php";
+
+require BASE_DIR."lib/ClanCats/Hydrahon/Translator/Mysql.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Base.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Table.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/FetchableInterface.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/SelectBase.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Select.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Delete.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Update.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Truncate.php";
+require BASE_DIR."lib/ClanCats/Hydrahon/Query/Sql/Insert.php";
+
+
+
+//require BASE_DIR."lib/Envms/FluentPDO/src/Queries/Base.php";
+//
+//require BASE_DIR."lib/Envms/FluentPDO/src/Query.php";
+//require BASE_DIR."lib/Envms/FluentPDO/Structure.php";
+//require BASE_DIR."lib/Envms/FluentPDO/Exception.php";
+//require BASE_DIR."lib/Envms/FluentPDO/Literal.php";
+//require BASE_DIR."lib/Envms/FluentPDO/Regex.php";
+//require BASE_DIR."lib/Envms/FluentPDO/Utilities.php";
+
 /*
  * @property Database $db
  */
+
 class Model{
     private static $db = null;
     public function __construct() {
+        
     }
     /**
      *
@@ -19,8 +56,16 @@ class Model{
     }
     
           // Common Database Methods
-    public static function find_all() {
-        return static::find_by_sql("SELECT * FROM " . static::$table_name);
+    public static function find_all($paginator = null) {
+        
+        $query = "SELECT * FROM " . static::$table_name;
+        if ($paginator) {
+            
+            $paginator->total = self::count_all();
+            $query = $paginator->prep_query($query);
+        }
+        
+        return static::find_by_sql($query);
     }
 
     public static function find_by_id($id = 0) {
@@ -34,8 +79,7 @@ class Model{
         $object_array = array();
         while ($row = Model::$db->fetch_array($result_set)) {
             $object_array[] = static::instantiate($row);
-        }
-       
+        }       
         return $object_array;
     }
     
@@ -150,16 +194,27 @@ class Model{
     }
 
     public function create($ignore) {
-        // Don't forget your SQL syntax and good habits:
-        // - INSERT INTO table (key, key) VALUES ('value', 'value')
-        // - single-quotes around all values
-        // - escape all values to prevent SQL injection
+        
         $attributes = $this->sanitized_attributes();
+       
         $sql = "INSERT ".( $ignore ? 'IGNORE' : '' )." INTO " . static::$table_name . " (";
         $sql .= join(", ", array_keys($attributes));
-        $sql .= ") VALUES ('";
-        $sql .= join("', '", array_values($attributes));
-        $sql .= "')";
+        $sql .= ") VALUES (";
+        
+        $attrs = '';
+        foreach ($attributes as $key => $value) {
+            if($key === static::$id_name){
+                $attrs .= "NULL,";
+            } else if($key === "created_at" and $value === ''){
+                $this->created_at = TimeHelper::DateTimeAdjusted();
+                $attrs .= "'".$this->created_at."',";
+            } else {
+                $attrs .= "'".$value."',";
+            }
+        }
+        
+        $sql .= substr($attrs, 0, -1);
+        $sql .= ")";
         
         $sql = str_replace("'NULL'", "NULL", $sql);
         

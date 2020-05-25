@@ -8,8 +8,7 @@
                     <i class="fa fa-calendar"></i> <span>Home</span>
                 </a>
             </li>
-
-
+            
             <?php if (Membership::instance()->has(Permission::USER_MANAGEMENT)): ?>
 
                 <li class="sub-menu" >
@@ -40,14 +39,7 @@
 
                 <?php endif; ?>
 
-
-
         </ul>
-
-
-
-
-
 
         <!-- sidebar menu end-->
     </div>

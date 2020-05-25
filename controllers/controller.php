@@ -111,6 +111,13 @@ class Controller {
         $_active_page_submenu_ = $sub;
     }
     
+    protected function _print($object) {
+        echo '<pre>';
+        print_r($object);
+        echo '</pre>';
+        exit;
+    }
+    
     public function need($permission){
         if(!Membership::instance()->has($permission)){
             Membership::instance()->clear_user_data();

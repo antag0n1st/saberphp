@@ -1,0 +1,14 @@
+<?php
+
+class {model} extends Model {
+
+    public static $table_name = '{table_name}';
+    public static $id_name = '{id}';
+    public static $db_fields = array({db_fields});
+    
+    {properties}
+    //public $email;
+
+}
+
+

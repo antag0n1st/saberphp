@@ -1,0 +1,5 @@
+id int primary
+counter int unsigned default 0 index
+name varchar 255 index
+email varchar 255
+created_at datetime

@@ -103,7 +103,9 @@ class AuthenticationController extends Controller {
             $user->password_2 = md5($pass);
             $user->session_id = Strings::GUID();
             $user->created_at = TimeHelper::DateTimeAdjusted();
-          //  $user->user_level = Role::$UNAUTHORIZED;
+            $user->last_logged_at = TimeHelper::DateTimeAdjusted();
+            $user->user_level = 0;
+            $user->login_count = 0;
             $user->email = $this->get_post('email');
             $user->full_name = $this->get_post('first_name').' '.$this->get_post('last_name');
             $user->save();
