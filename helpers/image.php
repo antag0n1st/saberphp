@@ -90,8 +90,8 @@ class Image {
    }
  
    function scale($scale) {
-      $width = $this->getWidth() * $scale/100;
-      $height = $this->getheight() * $scale/100;
+      $width = $this->getWidth() * $scale;
+      $height = $this->getheight() * $scale;
       $this->resize($width,$height);
    }
  

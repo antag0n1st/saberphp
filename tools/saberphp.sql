@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 25, 2020 at 09:32 AM
+-- Generation Time: May 26, 2020 at 12:46 PM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -93,14 +93,33 @@ CREATE TABLE IF NOT EXISTS `users` (
   `reset_code` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `users_index1117` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password_2`, `created_at`, `last_logged_at`, `login_count`, `role_id`, `session_id`, `email`, `full_name`, `reset_code`) VALUES
-(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '2020-05-25 11:28:31', '2020-05-25 11:29:24', 1, '1', '839A2EFE-1349-4F25-AFED-3DDAF2782634', 'trbogazov@gmail.com', 'ilija trbogazov', '');
+(2, 'admin', '21232f297a57a5a743894a0e4a801fc3', '2020-05-25 22:27:52', '2020-05-25 22:29:39', 2, '1', '8772C007-233D-4074-9918-5F5F63366334', 'trbogazov@gmail.com', 'ilija trbogazov', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_profiles`
+--
+
+DROP TABLE IF EXISTS `user_profiles`;
+CREATE TABLE IF NOT EXISTS `user_profiles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `users_user_id` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `contact` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_user_id` (`users_user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -24,17 +24,17 @@ class TimeHelper {
     }
 
     public static function to_date($date_time, $format = 'Y-m-d') {
-        if(!$date_time){
+        if (!$date_time) {
             return '';
         }
-        return date($format , strtotime($date_time));
+        return date($format, strtotime($date_time));
     }
-    
-    public static function extract_hour($date_time){
+
+    public static function extract_hour($date_time) {
         return date('H', strtotime($date_time));
     }
-    
-    public static function extract_minute($date_time){
+
+    public static function extract_minute($date_time) {
         return date('i', strtotime($date_time));
     }
 
@@ -130,6 +130,11 @@ class TimeHelper {
         }
 
         return null;
+    }
+
+    static function prep_for_db($date) {
+        $date = strtotime($date);
+        return date('Y-m-d', $date);
     }
 
 }

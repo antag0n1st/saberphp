@@ -1,51 +1,85 @@
 <?php
 
-// http://www.uploadify.com/documentation/
 class UploadifyController extends Controller {
 
-    public function upload_audio() {
-        global $layout;
-        $layout = null;
+    public function upload_file() {
+
+        $this->no_layout();
 
         $error_message = json_encode(["error" => ""]);
 
+        $directory = '';
+
+        $response = [];
+
         if (!empty($_FILES)) {
-            $tempFile = $_FILES['Filedata']['tmp_name'];
-            // Validate the file type
-            $fileTypes = array('mp3', 'MP3'); // File extensions
-            $fileParts = pathinfo($_FILES['Filedata']['name']);
-            $_parts = explode('.', $_FILES['Filedata']['name']);
 
-            $hash = md5(time());
+            $tempFile = $_FILES['file_upload']['tmp_name'];
 
-            if (in_array($fileParts['extension'], $fileTypes)) {
+            $mime_type = $_FILES['file_upload']['type'];
 
-                $district = $_POST['district'];
-                $chapter = $_POST['chapter'];
-                $lesson = $_POST['lesson'];
-                $question = $_POST['question'];
-                $type = $_POST['type'];
-
-                $sub_folders = "district_" . $district . DS . "chapter_" . $chapter . DS . "lesson_" . $lesson;
-
-                $goal_path = rtrim(CONTENT_DIR . 'sounds' . DS . $sub_folders, DS) . DS . 'question' . '-' . $hash . '.' . end($_parts);
-
-                $this->create_folders(rtrim('sounds' . DS . $sub_folders, DS));
-
-                if (move_uploaded_file($_FILES['Filedata']['tmp_name'], $goal_path)) {
-
-                    echo json_encode([
-                        "message" => "OK",
-                        "file_url" => str_replace(DS, '/', str_replace(CONTENT_DIR, '', $goal_path)),
-                        "question_id" => $question,
-                        "type" => $type
-                    ]);
-                } else {
-                    echo $error_message;
-                }
-            } else {
-                echo $error_message;
+            if (strpos($mime_type, 'image') === false) {
+                $this->json_response(['error' => 'not supported']);
+                return;
             }
+
+            $supported_extensions = [
+                'image/jpeg' => 'jpeg',
+                'image/jpg' => 'jpg',
+                'image/png' => 'png'
+            ];
+
+            $extension = $supported_extensions[$mime_type];
+
+            $hash = md5(time() . $tempFile);
+
+            Load::helper('image');
+
+            // CONTENT_DIR
+
+            $height = $this->get_post('height');
+            $width = $this->get_post('width');
+            $scale_mode = $this->get_post('scale_mode');
+            $aspekt_ratio = $width / $height;
+
+            $sub_folders = 'images' . DS . date('Y') . DS . date('M');
+
+            $image_name = 'image' . '-' . $hash . '.' . $extension;
+
+            $image_path = $sub_folders . DS . $image_name;
+
+            $goal_path = CONTENT_DIR . $image_path;
+
+            $sub = rtrim($sub_folders, DS);
+            $this->create_folders($sub);
+            // $this->create_folders($sub.DS."thumb");
+
+            $image = new Image();
+            $image->load($tempFile);
+
+            // $fb_goal_path = $this->CONTENT_DIR . $sub_folders . DS . 'image' . '-' . $hash . '_fb.' . end($_parts);
+            // FB 600 x 315
+
+            $_s = 1;
+
+            if ($scale_mode === "fit") {
+                $_s = min($width / $image->getWidth(), $height / $image->getHeight());
+            } else if ($scale_mode === "fil") {
+                $_s = max($width / $image->getWidth(), $height / $image->getHeight());
+            }
+
+            $image->scale($_s);
+            $image->save($goal_path);
+            $response['scale_mode'] = $scale_mode;
+
+
+
+            // $goal_path
+            // $this->makeThumb($image_name, CONTENT_DIR . $sub_folders . DS, 112);
+
+            $image_path = str_replace('\\', '/', $image_path);
+            $response['path'] = $image_path;
+            $this->json_response($response);
         } else {
             echo $error_message;
         }
@@ -53,7 +87,7 @@ class UploadifyController extends Controller {
 
     private function create_folders($path) {
         $subfolders = explode(DS, $path);
-        $breadcrumb = CONTENT_DIR . "";
+        $breadcrumb = CONTENT_DIR;
 
         foreach ($subfolders as $key => $dir) {
             $breadcrumb .= DS . $dir;
@@ -63,59 +97,58 @@ class UploadifyController extends Controller {
         }
     }
 
-    public function upload() {
-        // http://www.uploadify.com/documentation/
-        global $layout;
-        $layout = false;
+    private function makeThumb($filename, $path, $thumbSize = 100) {
+        $max_width = 112;
+        $max_height = 112;
 
-        Load::helper('image');
+        /* Set Filenames */
+        $srcFile = $path . $filename;
+        $thumbFile = $srcFile; // $path . 'thumb/' . $filename;
 
-
-        if (!empty($_FILES)) {
-            $tempFile = $_FILES['Filedata']['tmp_name'];
-            // Validate the file type
-            $fileTypes = array('jpg', 'jpeg', 'gif', 'png', 'JPG', 'JPEG', 'GIF', 'PNG'); // File extensions
-            $fileParts = pathinfo($_FILES['Filedata']['name']);
-            $_parts = explode('.', $_FILES['Filedata']['name']);
-            $file_name = '';
-            $hash = md5(time());
-
-            if (in_array($fileParts['extension'], $fileTypes)) {
-
-
-
-
-                foreach ($_POST as $key => $value) {
-
-                    if (is_numeric($key)) {
-
-                        $image = new Image();
-                        $image->load($tempFile);
-
-                        $posted_values = json_decode($value, TRUE);
-                        $the_vals = array();
-                        foreach ($posted_values as $posted_key => &$posted_value) {
-                            $the_vals[str_replace(array('"', '\''), '', $posted_key)] = str_replace(array('"', '\''), '', $posted_value);
-                        }
-                        extract($the_vals);
-
-                        $aspekt_ratio = $width / $height;
-
-                        if ($aspekt_ratio < $image->getWidth() / $image->getHeight()) {
-                            $image->resizeToHeight($height);
-                            $image->save(rtrim($path, '\\') . '/' . $image_title . '-' . $hash . '.' . end($_parts));
-                        } else {
-                            $image->resizeToWidth($width);
-                            $image->save(rtrim($path, '\\') . '/' . $image_title . '-' . $hash . '.' . end($_parts));
-                        }
-                    }
-                }
-
-                echo $image_title . '-' . $hash . '.' . end($_parts);
-            } else {
-                echo 'Invalid file type.';
-            }
+        /* Determine the File Type */
+        $type = substr($filename, strrpos($filename, '.') + 1);
+        /* Create the Source Image */
+        switch ($type) {
+            case 'jpg' : case 'jpeg' :
+                $src = imagecreatefromjpeg($srcFile);
+                break;
+            case 'png' :
+                $src = imagecreatefrompng($srcFile);
+                break;
+            case 'gif' :
+                $src = imagecreatefromgif($srcFile);
+                break;
         }
+        /* Determine the Image Dimensions */
+        $oldW = imagesx($src);
+        $oldH = imagesy($src);
+
+        $limiting_dim = 0;
+        if ($oldH > $oldW) {
+            /* Portrait */
+            $limiting_dim = $oldW;
+        } else {
+            /* Landscape */
+            $limiting_dim = $oldH;
+        }
+        /* Create the New Image */
+        $new = imagecreatetruecolor($thumbSize, $thumbSize);
+        /* Transcribe the Source Image into the New (Square) Image */
+        imagecopyresampled($new, $src, 0, 0, ($oldW - $limiting_dim ) / 2, ( $oldH - $limiting_dim ) / 2, $thumbSize, $thumbSize, $limiting_dim, $limiting_dim);
+
+        switch ($type) {
+            case 'jpg' : case 'jpeg' :
+                $src = imagejpeg($new, $thumbFile);
+                break;
+            case 'png' :
+                $src = imagepng($new, $thumbFile);
+                break;
+            case 'gif' :
+                $src = imagegif($new, $thumbFile);
+                break;
+        }
+        imagedestroy($new);
+//        imagedestroy($src);
     }
 
 }

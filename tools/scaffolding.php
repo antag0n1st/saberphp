@@ -15,6 +15,8 @@ if (php_sapi_name() != "cli") {
 chdir("..");
 include_once 'config/boot.php';
 
+
+
 $main_dir = 'config/scaffolding/models';
 
 $content = "";
@@ -47,16 +49,67 @@ function getStringsBetween($string, $start, $end) {
     return $matches[1];
 }
 
+$mode = str_replace('--mode=', '', $argv[1]);
+$model_file_name = str_replace('--model_name=', '', $argv[2]);
+
+if (!$model_file_name) {
+    $model_file_name = 'none';
+}
+
+echo "\n";
+echo "=====================================\n";
+echo "Selected model: " . $model_file_name;
+echo "\n";
+echo "=====================================\n";
+
+$overwrite = false;
+$recreate_table = false;
+$delete = false;
+$model_and_table = false;
+
+if ($mode === "o" or $mode === "overwrite") {
+    $overwrite = true;
+    $recreate_table = true;
+} else if ($mode === "d" or $mode === "delete") {
+    $delete = true;
+}else if ($mode === "m") {
+    $model_and_table = true;
+    $recreate_table  = true;
+} else { // mode == r , or default
+    $recreate_table = true;
+}
+
 function listFolderFiles($dir) {
 
-    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text'];
+    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text' , 'date'];
     $attributes = ['unsigned', 'signed'];
 
     $ffs = scandir($dir);
-    global $main_dir;
+    global $main_dir, $model_file_name, $delete;
     foreach ($ffs as $ff) {
 
         if ($ff != '.' && $ff != '..') {
+
+            echo "\n";
+            echo "\n";
+            echo "Found model: " . $ff;
+            echo "\n";
+
+            if ($model_file_name === "all" or $model_file_name === $ff) {
+
+                echo "Working on model: " . $ff;
+                echo "\n";
+            } else if ($model_file_name === "none") {
+                echo "\n";
+                echo "Aborting beause no model was selected";
+                echo "\n";
+                return;
+            } else {
+                echo "Skipping ...";
+                echo "\n";
+                echo "\n";
+                continue;
+            }
 
             $file_content = file_get_contents($dir . DS . $ff);
             $lines = explode("\n", trim($file_content));
@@ -81,7 +134,7 @@ function listFolderFiles($dir) {
                 $field_name = null;
                 $segments = [
                     'name' => '',
-                    'type' => '',
+                    'type' => 'int',
                     'attribute' => '',
                     'null' => '',
                     'default' => '',
@@ -99,12 +152,15 @@ function listFolderFiles($dir) {
 
                     if (!$type_resolved) {
                         if (is_numeric($p)) {
-                            $segments['type'] .= "(" . $p . ")";
+                            if ($segments['type'] !== "varchar(255)") {
+                                $segments['type'] .= "(" . $p . ")";
+                            }
                             $type_resolved = true;
                             continue;
                         } else if (in_array($p, $supported_type)) {
-                            $segments['type'] .= $p;
+                            $segments['type'] = $p;
                             if ($p === "varchar") {
+                                $segments['type'] = 'varchar(255)';
                                 $segments['attribute'] = "COLLATE utf8_general_ci";
                             }
                             continue;
@@ -174,17 +230,11 @@ function listFolderFiles($dir) {
 
             // create tables
             if (create_table($table_name, $fields, $keys)) {
-
-                // continue with scaffolding
-                // doScaffolding($table_name, $fields, $keys);
-            } else {
-
-                echo "Check if the table needs to be altered ... \n";
+                
+            } else if (!$delete) {
+                echo "TODO - Check if the table needs to be altered ... \n";
             }
 
-
-
-            // this is for testing
             doScaffolding($table_name, $fields, $keys);
         }
     }
@@ -192,58 +242,85 @@ function listFolderFiles($dir) {
 
 function create_table($table_name, $fields, $keys) {
 
+    global $overwrite, $recreate_table, $delete;
+
     $query = " SELECT * FROM information_schema.tables WHERE table_schema = '" . DB_NAME . "' AND table_name = '" . $table_name . "' LIMIT 1; ";
     $row = Model::db()->query_first_row($query);
 
     if ($row) {
         echo "Table already exists\n";
-        return false;
-    } else {
 
-        $query = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (\n";
+        if ($overwrite or $recreate_table or $delete) {
+            // drop it first
 
-        $field_strings = [];
-
-        foreach ($fields as $fs) {
-            $field_strings[] = implode(' ', array_values($fs));
+            $query = "DROP TABLE `" . $table_name . "` ";
+            Model::db()->query($query);
+            echo "Table Dropped!\n";
+        } else {
+            return false;
         }
-
-        foreach ($keys as $key) {
-
-            if ($key['type'] === "primary") {
-                $field_strings[] = "PRIMARY KEY (`" . $key['field'] . "`)";
-            } else if ($key['type'] === "index") {
-                $field_strings[] = "KEY (`" . $key['field'] . "`)";
-            } else if ($key['type'] === "unique") {
-                $field_strings[] = "UNIQUE KEY (`" . $key['field'] . "`)";
-            }
-        }
-
-
-        $query .= "\t" . implode(",\n\t", $field_strings);
-        $query .= "\n) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ";
-
-        Model::db()->query($query);
-        return true;
     }
+
+    if ($delete) {
+        echo "Table " . $table_name . " removed ...\n";
+        return false;
+    }
+
+    $query = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (\n";
+
+    $field_strings = [];
+
+    foreach ($fields as $fs) {
+        $field_strings[] = implode(' ', array_values($fs));
+    }
+
+    foreach ($keys as $key) {
+
+        if ($key['type'] === "primary") {
+            $field_strings[] = "PRIMARY KEY (`" . $key['field'] . "`)";
+        } else if ($key['type'] === "index") {
+            $field_strings[] = "KEY (`" . $key['field'] . "`)";
+        } else if ($key['type'] === "unique") {
+            $field_strings[] = "UNIQUE KEY (`" . $key['field'] . "`)";
+        }
+    }
+
+
+    $query .= "\t" . implode(",\n\t", $field_strings);
+    $query .= "\n) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ";
+
+    Model::db()->query($query);
+    echo "Table " . $table_name . " created!\n";
+    return true;
 }
 
 function doScaffolding($table_name, $fields, $keys) {
 
+    global $overwrite, $delete , $model_and_table;
+
     Load::script('classes/inflect');
 
-    $controler = ucfirst(Inflect::pluralize($table_name)) . "Controller";
+    $names = explode('_', $table_name);
+    $controller_class_name = '';
+    $model_name = '';
+    $title_entities = '';
+    $title_entity = '';
+    foreach ($names as $name) {
+        $controller_class_name .= ucfirst($name);
+        $title_entities .= ucfirst($name) . " ";
+        $model_name .= ucfirst(Inflect::singularize($name));
+        $title_entity .= ucfirst(Inflect::singularize($name)) . " ";
+    }
+    $title_entities = trim($title_entities);
+    $title_entity = trim($title_entity);
+
+    $controler = ucfirst(Inflect::pluralize($controller_class_name));
     $controler_file = strtolower(Inflect::pluralize($table_name));
-    $model = ucfirst(Inflect::singularize($table_name));
-    $model_name = strtolower($model);
+    $model = $model_name; //ucfirst(Inflect::singularize($table_name));
+    $model_instance = strtolower(Inflect::singularize($table_name));
     $model_filename = strtolower(Inflect::pluralize($table_name));
     $entities = strtolower(Inflect::pluralize($table_name));
     $url = $entities;
-
-    // table_name , 
-    // id
-    // db_fields
-    // properties
 
     foreach ($keys as $key) {
         if ($key['type'] == "primary") {
@@ -258,65 +335,76 @@ function doScaffolding($table_name, $fields, $keys) {
     $table_header = '';
     $table_body = '';
     $form_controls = '';
-    
+
     foreach ($fields as $field) {
         $name = trim($field['name'], '`');
         if ($field['name'] !== $index and $name !== 'created_at') {
-            
-            $post_fields .= "\t\t\$" . $model_name . '->' . $name . " = \$this->get_post('" . $name . "');\n";
-            
+
+            $post_fields .= "\t\t\$" . $model_instance . '->' . $name . " = \$this->get_post('" . $name . "');\n";
+
             $form_controls .= '<div class="form-group">
-                        <label for="'.$name.'" class="col-lg-2 col-sm-2 control-label ">'.$name.'</label>
+                        <label for="' . $name . '" class="col-lg-2 col-sm-2 control-label ">' . $name . '</label>
                         <div class="col-lg-10">
-                            <?php HTML::textfield(\''.$name.'\', \'form-control\', null, null, false, $'.$model_name.'->'.$name.' ); ?>
+                            <?php HTML::textfield(\'' . $name . '\', \'form-control\', null, null, false, $' . $model_instance . '->' . $name . ' ); ?>
                         </div>
                     </div>';
-            
         }
         $db_fields[] = $name;
-        $properties .= "\tpublic $".$name.";\n";
-        $table_header .= "\t\t\t<th>".$name."</th>\n";
-        $table_body .= "\t\t\t\t<td><?php echo \$".$model_name."->".$name."; ?></td>\n";
-        
+        $properties .= "\tpublic $" . $name . ";\n";
+        $table_header .= "\t\t\t<th>" . $name . "</th>\n";
+        $table_body .= "\t\t\t\t<td><?php echo \$" . $model_instance . "->" . $name . "; ?></td>\n";
     }
 
-    if (!file_exists('controllers/' . $controler_file . '.php')) {
-        
-        $controllerContent = file_get_contents('config/scaffolding/templates/controller');
-
-        $controllerContent = str_replace('{controler}', $controler, $controllerContent);
-        $controllerContent = str_replace('{model}', $model, $controllerContent);
-        $controllerContent = str_replace('{model_name}', $model_name, $controllerContent);
-        $controllerContent = str_replace('{entities}', $entities, $controllerContent);
-        $controllerContent = str_replace('{url}', $url, $controllerContent);
-        $controllerContent = str_replace('{post_fields}', $post_fields, $controllerContent);
-
-        file_put_contents('controllers/' . $controler_file . '.php', $controllerContent);
-
-    }
     
-    if (!file_exists('models/' . $model_name . '.php')) {
-        
-        $modelContent = file_get_contents('config/scaffolding/templates/model');
+    if($model_and_table or $overwrite){
 
-        $modelContent = str_replace('{table_name}', $table_name, $modelContent);
-        $modelContent = str_replace('{model}', $model, $modelContent);
-        $modelContent = str_replace('{id}', $id, $modelContent);
-        $modelContent = str_replace('{db_fields}', "'".implode("','", $db_fields)."'", $modelContent);
-        $modelContent = str_replace('{properties}', $properties, $modelContent);
+        $file_name = 'models/' . $model_instance . '.php';
 
-        file_put_contents('models/' . $model_name . '.php', $modelContent);
+        $content = file_get_contents('config/scaffolding/templates/model');
+
+        $content = str_replace('{table_name}', $table_name, $content);
+        $content = str_replace('{model}', $model, $content);
+        $content = str_replace('{id}', $id, $content);
+        $content = str_replace('{db_fields}', "'" . implode("','", $db_fields) . "'", $content);
+        $content = str_replace('{properties}', $properties, $content);
+
+        file_put_contents($file_name, $content);
+
+        echo "Writing to " . $file_name;
+        echo "\n";
     }
-    
-    if (!file_exists('views/' . $model_filename .'/'. 'list.php')) {
-        
+
+    if ($overwrite) {
+
+        $file_name = 'controllers/' . $controler_file . '.php';
+
+        $content = file_get_contents('config/scaffolding/templates/controller');
+
+        $content = str_replace('{controler}', $controler, $content);
+        $content = str_replace('{model}', $model, $content);
+        $content = str_replace('{model_name}', $model_instance, $content);
+        $content = str_replace('{entities}', $entities, $content);
+        $content = str_replace('{url}', $url, $content);
+        $content = str_replace('{post_fields}', $post_fields, $content);
+
+        file_put_contents($file_name, $content);
+
+        echo "Writing to " . $file_name;
+        echo "\n";
+
+        ////////////////////////////////
+
+        $file_name = 'views/' . $model_filename . '/' . 'list.php';
+
         if (!file_exists('views/' . $model_filename)) {
             mkdir('views/' . $model_filename, 0777, true);
         }
-        
+
         $content = file_get_contents('config/scaffolding/templates/list');
 
-        $content = str_replace('{model_name}', $model_name, $content);
+        $content = str_replace('{title_entities}', $title_entities, $content);
+        $content = str_replace('{controler}', $controler, $content);
+        $content = str_replace('{model_name}', $model_instance, $content);
         $content = str_replace('{model}', $model, $content);
         $content = str_replace('{id}', $id, $content);
         $content = str_replace('{table_header}', $table_header, $content);
@@ -325,27 +413,67 @@ function doScaffolding($table_name, $fields, $keys) {
         $content = str_replace('{url}', $url, $content);
         $content = str_replace('{form_controls}', $form_controls, $content);
 
-        file_put_contents('views/' . $model_filename .'/'. 'list.php', $content);
-    }
-    
-    if (!file_exists('views/' . $model_filename .'/'. 'add.php')) {
-        
+        file_put_contents($file_name, $content);
+
+        echo "Writing to " . $file_name;
+        echo "\n";
+
+        //////////////////////////////////////////
+
+        $file_name = 'views/' . $model_filename . '/' . 'add.php';
+
         if (!file_exists('views/' . $model_filename)) {
             mkdir('views/' . $model_filename, 0777, true);
         }
-        
+
         $content = file_get_contents('config/scaffolding/templates/add');
 
-        $content = str_replace('{model_name}', $model_name, $content);
+        $content = str_replace('{title_entity}', $title_entity, $content);
+        $content = str_replace('{model_name}', $model_instance, $content);
         $content = str_replace('{model}', $model, $content);
         $content = str_replace('{form_controls}', $form_controls, $content);
         $content = str_replace('{post_fields}', $post_fields, $content);
-//        $content = str_replace('{table_body}', $table_body, $content);
-//        $content = str_replace('{entities}', $entities, $content);
 
-        file_put_contents('views/' . $model_filename .'/'. 'add.php', $content);
+        file_put_contents($file_name, $content);
+
+        echo "Writing to " . $file_name;
+        echo "\n";
+    } else if ($delete) {
+
+        $file_name = 'controllers/' . $controler_file . '.php';
+        delete_file($file_name);
+
+        $file_name = 'models/' . $model_instance . '.php';
+        delete_file($file_name);
+
+        $file_name = 'views/' . $model_filename . '/' . 'list.php';
+        delete_file($file_name);
+
+        $file_name = 'views/' . $model_filename . '/' . 'add.php';
+        delete_file($file_name);
+
+        $file_name = 'views/' . $model_filename;
+        if (file_exists($file_name)) {
+            rmdir($file_name);
+            echo "Deleting " . 'views/' . $model_filename;
+            echo "\n";
+            echo "\n";
+        } else {
+            echo "Already deleted " . $file_name;
+            echo "\n";
+        }
     }
-        
+}
+
+function delete_file($file) {
+    if (file_exists($file)) {
+        unlink($file);
+        echo "Deleting " . $file;
+        echo "\n";
+    } else {
+        echo "Already deleted " . $file;
+        echo "\n";
+    }
 }
 
 listFolderFiles($main_dir);

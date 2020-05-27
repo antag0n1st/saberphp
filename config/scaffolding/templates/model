@@ -7,7 +7,6 @@ class {model} extends Model {
     public static $db_fields = array({db_fields});
     
     {properties}
-    //public $email;
 
 }
 

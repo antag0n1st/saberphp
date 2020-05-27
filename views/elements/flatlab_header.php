@@ -26,11 +26,13 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="<?php echo URL::abs('public/flatlab/img/avatar-mini2.jpg'); ?>">
+                    <img alt="" src="<?php echo URL::abs('public/uploads/'.$profile_image); ?>" style="height: 32px;">
                     <span class="username"><?php echo Membership::instance()->user->username; ?> </span>
                     <b class="caret"></b>
                 </a>
-                <ul class="dropdown-menu extended logout">                  
+                <ul class="dropdown-menu extended logout">     
+                    <div class="log-arrow-up"></div>
+                    <li><a href="<?php echo URL::abs('profile'); ?>"><i class=" fa fa-suitcase"></i>Profile</a></li>
                     <li><a href="<?php echo URL::abs('logout'); ?>"><i class="fa fa-key"></i> Log Out</a></li>
                 </ul>
             </li>

@@ -58,7 +58,7 @@ class Controller {
     protected function get_post($value) {
         return isset($_POST[$value]) ? $_POST[$value] : "";
     }
-    
+
     protected function get_session($value) {
         return isset($_SESSION[$value]) ? $_SESSION[$value] : "";
     }
@@ -110,7 +110,7 @@ class Controller {
         $_active_page_ = $main;
         $_active_page_submenu_ = $sub;
     }
-    
+
     protected function _print($object) {
         echo '<pre>';
         print_r($object);
@@ -118,8 +118,23 @@ class Controller {
         exit;
     }
     
-    public function need($permission){
-        if(!Membership::instance()->has($permission)){
+    /**
+     * 
+     * @param type $objects
+     * @param type $key usually the id of the object
+     * @param type $value usually some name or title
+     * @return type
+     */
+    protected function prep_select($objects, $key = 'id', $value = 'name') {
+        $data = [];
+        foreach ($objects as $object) {
+            $data[$object->$key] = $object->$value;
+        }
+        return $data;
+    }
+
+    public function need($permission) {
+        if (!Membership::instance()->has($permission)) {
             Membership::instance()->clear_user_data();
             URL::redirect('oops/no-privileges');
         }

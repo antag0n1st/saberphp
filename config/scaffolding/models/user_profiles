@@ -1,0 +1,7 @@
+id primary
+users_user_id index
+email varchar
+date_of_birth date
+profile_image varchar
+contact varchar
+created_at datetime

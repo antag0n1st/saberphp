@@ -27,6 +27,19 @@ function recurseCopy($src, $dst) {
     closedir($dir);
 }
 
+function recursiveRemove($path) {
+    if (is_dir($path)) {
+        foreach (scandir($path) as $entry) {
+            if (!in_array($entry, ['.', '..'])) {
+                recursiveRemove($path . DS . $entry);
+            }
+        }
+        rmdir($path);
+    } else {
+        unlink($path);
+    }
+}
+
 $dir_name = str_replace('--dir=', '', $argv[1]);
 $name = str_replace('--name=', '', $argv[2]);
 $db_name = str_replace('--db_name=', '', $argv[3]);
@@ -50,12 +63,12 @@ if (!$email) {
     $email = 'trbogazov@gmail.com';
 }
 
-echo $dir_name . "\n";
-echo $name . "\n";
-echo $db_name . "\n";
-echo $db_user . "\n";
-echo $db_pass . "\n";
-echo $email . "\n";
+//echo $dir_name . "\n";
+//echo $name . "\n";
+//echo $db_name . "\n";
+//echo $db_user . "\n";
+//echo $db_pass . "\n";
+//echo $email . "\n";
 
 $content = file_get_contents('tools/config');
 
@@ -72,8 +85,8 @@ if (!file_exists($dir_name)) {
 
     mkdir($dir_name, 0777, true);
 } else {
-    echo "The directory already exist";
-    // exit;
+    echo "The directory already exist\n";
+    exit;
 }
 
 recurseCopy('saberphp/tools', $dir_name . '/tools');
@@ -105,11 +118,15 @@ copy('saberphp/php.ini', $dir_name . '/php.ini');
 
 file_put_contents($dir_name . '/config.php', $content);
 
+// empty models dir
 array_map( 'unlink', array_filter((array) glob($dir_name . '/config/scaffolding/models/*') ) );
 
-// lets deploy the database
+// remove images dir
+recursiveRemove($dir_name . '/public/uploads/images/');
 
-$query = "CREATE DATABASE IF NOT EXISTS " . $db_name . ";";
+// lets deploy the database
+// 
+$query = "CREATE DATABASE IF NOT EXISTS " . $db_name . " CHARACTER SET utf8 COLLATE utf8_general_ci; ";
 Model::db()->query($query);
 Model::db()->change_db($db_name);
 

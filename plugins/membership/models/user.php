@@ -114,5 +114,27 @@ class User extends Model {
                 break;
         }
     }
+    
+    public static function update_password($user_id, $old_password, $new_password) {
+
+        $query = " SELECT * from users ";
+        $query .= " WHERE password_2 = '" . md5(Model::db()->prep($old_password)) . "' ";
+        $query .= " AND user_id = '" . Model::db()->prep($user_id) . "' ";
+        $query .= " LIMIT 1 ";
+
+        Model::db()->query($query);
+
+        if (Model::db()->affected_rows_count() === 1) {
+            $query = " UPDATE users SET ";
+            $query .= " password_2 = '" . md5(Model::db()->prep($new_password)) . "' ";
+            $query .= " WHERE user_id = '" . Model::db()->prep($user_id) . "' ";
+            $query .= " LIMIT 1 ";
+
+            Model::db()->query($query);
+            return true;
+        }
+        
+        return false;
+    }
 
 }

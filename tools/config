@@ -78,7 +78,8 @@ $_autoload_paths = array('helpers', 'models', 'classes');
  * included in the project
  */
 $plugins = array(
-    'membership'
+    'membership',
+    'uploadify'
 );
 
 // PLUGIN CONTROLLERS , 

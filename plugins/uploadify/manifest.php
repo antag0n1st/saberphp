@@ -6,7 +6,7 @@
  */
 $conf = array(
           //  'css' => 'uploadify', // name of the files
-            'js'  => 'jquery.uploadify' , // name of the files
+          //  'js'  => 'jquery.uploadify' , // name of the files
             'classes' => 'uploadify' , // the names of the included files
             'controllers' => 'uploadify'
 );

@@ -208,6 +208,55 @@ class HTML {
         }
     }
 
+    public static function date_picker($name = "",$value = "", $format = "d M Y", $class = "form-control form-control-inline input-medium", $style = "",$attr = array('size'=>16)) {
+
+        $value = TimeHelper::to_date($value,$format);
+        $js_format = str_replace('Y', 'yyyy', $format);
+        $js_format = str_replace('d', 'dd', $js_format);
+                
+        $textfield = "<input type=\"text\"";
+        $textfield .= " name=\"" . $name . "\" id=\"" . $name . "\"";
+        $textfield .= " class=\"" . $class . "\" style=\"" . $style . "\"";
+
+        if ($value) {
+            $textfield .= " value=\"" . htmlentities($value) . "\"";
+        } else {
+            $textfield .= isset($_POST[$name]) ? " value=\"" . $_POST[$name] . "\"" : "";
+        }
+
+        if ($attr && count($attr) > 0) {
+            foreach ($attr as $atr_key => $atr_value) {
+                if ($atr_value !== null) {
+                    $textfield .= " " . $atr_key . "=\"" . $atr_value . "\"";
+                } else {
+                    $textfield .= " " . $atr_key . " ";
+                }
+            }
+        }
+
+        $textfield .= " />";
+
+        $textfield .= '<script>
+            $(function(){
+            
+                if(!$.fn.datepicker){
+                    console.warn("Please include the Date Picker js and css files in your controler");
+                    console.log("Head::instance()->load_css(\'../flatlab/assets/bootstrap-datepicker/css/datepicker\');");
+                    console.log("Head::instance()->load_js(\'../flatlab/assets/bootstrap-datepicker/js/bootstrap-datepicker\');")
+                    return;
+                }
+
+                window.prettyPrint && prettyPrint();
+                $(\'#'.$name.'\').datepicker({
+                    format: \''.$js_format.'\',
+                    autoclose: true
+                });
+            });
+        </script>';
+
+        echo $textfield;
+    }
+
 }
 
 function popover_attr($title, $class = '', $position = 'top') {
