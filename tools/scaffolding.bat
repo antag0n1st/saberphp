@@ -2,10 +2,9 @@
 
 echo Create new ? Y/N default (no)
 set /p create_new=
-
 if "%create_new%"=="y" (
 
-echo What is the table name (make it PLURAL!) ?
+echo What is the table name ? - make it PLURAL!
 set /p model_name=
 goto create
 

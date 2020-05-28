@@ -13,7 +13,8 @@ class ProfileController extends AdminController {
         Head::instance()->load_js('../flatlab/assets/bootstrap-datepicker/js/bootstrap-datepicker');
         
         $uploadify = new Uploadify();
-        $uploadify->set_size(250, 250 , Uploadify::SCALE_MODE_FIL);
+        $uploadify->set_size(300, 300 , Uploadify::SCALE_MODE_FIL);
+        $uploadify->set_thumbnail('thumb',32,32);
         Load::assign('uploadify', $uploadify);
 
         if (isset($_POST) and $_POST) {

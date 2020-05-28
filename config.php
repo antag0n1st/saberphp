@@ -24,13 +24,16 @@ define('HOST_ID', 1);
  * ======================================================
  * set BASE_URL and BASE_DIR for different environments
  */
-define('CONTENT_DIR', realpath(BASE_DIR . 'public/uploads/') . DS);
+
 
 if (HOST_ID == 0) {
     define('BASE_URL', "http://example.com/");
 } else if (HOST_ID == 1) {
     define('BASE_URL', "http://localhost/saberphp/");
 }
+
+define('CONTENT_DIR', realpath(BASE_DIR . 'public/uploads/') . DS);
+define('CONTENT_URL', BASE_URL . 'public/uploads/');
 
 date_default_timezone_set('Europe/Skopje');
 

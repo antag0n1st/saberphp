@@ -72,16 +72,16 @@ if ($mode === "o" or $mode === "overwrite") {
     $recreate_table = true;
 } else if ($mode === "d" or $mode === "delete") {
     $delete = true;
-}else if ($mode === "m") {
+} else if ($mode === "m") {
     $model_and_table = true;
-    $recreate_table  = true;
+    $recreate_table = true;
 } else { // mode == r , or default
     $recreate_table = true;
 }
 
 function listFolderFiles($dir) {
 
-    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text' , 'date'];
+    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text', 'date'];
     $attributes = ['unsigned', 'signed'];
 
     $ffs = scandir($dir);
@@ -147,14 +147,31 @@ function listFolderFiles($dir) {
                         $name_resolved = true;
                         $segments['name'] = '`' . $p . '`';
                         $field_name = $p;
+
+                        if ($p == "id") {
+                            $segments['null'] = "NOT NULL";
+                            $segments['increment'] = "AUTO_INCREMENT";
+                            $keys[] = [
+                                'field' => $field_name,
+                                'type' => 'primary'
+                            ];
+                        } else if ($p == "created_at") {
+                            $segments['type'] = 'datetime';
+                        }
+
                         continue;
                     }
 
                     if (!$type_resolved) {
+
                         if (is_numeric($p)) {
-                            if ($segments['type'] !== "varchar(255)") {
+
+                            if ($segments['type'] === "varchar(255)") {
+                                $segments['type'] = "varchar(" . $p . ")";
+                            } else {
                                 $segments['type'] .= "(" . $p . ")";
                             }
+
                             $type_resolved = true;
                             continue;
                         } else if (in_array($p, $supported_type)) {
@@ -207,10 +224,22 @@ function listFolderFiles($dir) {
                         if ($p === "primary") {
                             $segments['null'] = "NOT NULL";
                             $segments['increment'] = "AUTO_INCREMENT";
-                            $keys[] = [
-                                'field' => $field_name,
-                                'type' => 'primary'
-                            ];
+                            
+                            //TODO refactor this to , add key if not exists
+                            
+                            $should_add = true;
+                            foreach ($keys as $key) {
+                                if ($key['type'] === "primary") {
+                                    $should_add = false;
+                                    break;
+                                }
+                            }
+                            if ($should_add) {
+                                $keys[] = [
+                                    'field' => $field_name,
+                                    'type' => 'primary'
+                                ];
+                            }
                         } else if ($p === "index") {
                             $keys[] = [
                                 'field' => $field_name,
@@ -296,7 +325,7 @@ function create_table($table_name, $fields, $keys) {
 
 function doScaffolding($table_name, $fields, $keys) {
 
-    global $overwrite, $delete , $model_and_table;
+    global $overwrite, $delete, $model_and_table;
 
     Load::script('classes/inflect');
 
@@ -355,8 +384,8 @@ function doScaffolding($table_name, $fields, $keys) {
         $table_body .= "\t\t\t\t<td><?php echo \$" . $model_instance . "->" . $name . "; ?></td>\n";
     }
 
-    
-    if($model_and_table or $overwrite){
+
+    if ($model_and_table or $overwrite) {
 
         $file_name = 'models/' . $model_instance . '.php';
 

@@ -47,7 +47,11 @@ class AdminController extends Controller {
                 $profile->save();
             }
             
-            $profile_image = $profile->profile_image ? $profile->profile_image : 'blank_profile.jpg';
+            $profile_image = new Image($profile->profile_image);
+            if(!$profile->profile_image){
+                $profile_image->url = 'blank_profile.jpg';
+            }
+//            $profile_image = $profile->profile_image ? $profile->profile_image : 'blank_profile.jpg';
             Load::assign('profile_image', $profile_image);
             
             Load::assign('profile', $profile);

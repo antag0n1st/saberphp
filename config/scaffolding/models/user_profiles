@@ -2,6 +2,6 @@ id primary
 users_user_id index
 email varchar
 date_of_birth date
-profile_image varchar
+profile_image varchar 510
 contact varchar
 created_at datetime

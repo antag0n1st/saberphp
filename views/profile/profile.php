@@ -13,7 +13,7 @@
                          border-radius: 50%;
                          background-position: center;
                          background-size: cover;
-                         background-image: url('<?php echo URL::abs('public/uploads/'.$profile_image); ?>');">
+                         background-image: url('<?php  echo $profile_image->url(); ?>');">
                     </div>
                 </a>
                 <h1><?php echo Membership::instance()->user->full_name; ?></h1>
@@ -55,7 +55,7 @@
                     <div class="form-group">
                         <label  class="col-lg-2 control-label">Update Avatar</label>
                         <div class="col-lg-6">
-                            <?php $uploadify->display('profile_image',$profile->profile_image); ?>                            
+                            <?php $uploadify->display('profile_image',$profile_image->url); ?>                            
                         </div>
                     </div>
                     <div class="form-group">

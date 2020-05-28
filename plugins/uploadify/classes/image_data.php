@@ -20,7 +20,7 @@
 *
 */
  
-class Image {
+class ImageData {
  
    var $image;
    var $image_type;

@@ -26,7 +26,7 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="<?php echo URL::abs('public/uploads/'.$profile_image); ?>" style="height: 32px;">
+                    <img alt="" src="<?php echo $profile_image->thumbnail()->url; ?>" style="height: 32px;">
                     <span class="username"><?php echo Membership::instance()->user->username; ?> </span>
                     <b class="caret"></b>
                 </a>

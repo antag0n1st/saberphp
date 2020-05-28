@@ -5,7 +5,13 @@
 
             <li class="menu" >
                 <a href="<?php echo URL::abs('home'); ?>" class="<?php HTML::main_menu('home'); ?>" >
-                    <i class="fa fa-calendar"></i> <span>Home</span>
+                    <i class="fa fa-home"></i> <span>Home</span>
+                </a>
+            </li>
+            
+            <li class="menu" >
+                <a href="<?php echo URL::abs('gallery-photos'); ?>" class="<?php HTML::main_menu('gallery-photos'); ?>" >
+                    <i class="fa fa-photo"></i> <span>Gallery Photos</span>
                 </a>
             </li>
             

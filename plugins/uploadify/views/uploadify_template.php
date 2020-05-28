@@ -65,10 +65,11 @@
 
 </style>
 
-<input id="<?php echo $field_name; ?>" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo $image_url; ?>" />
+<input id="<?php echo $field_name; ?>" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo htmlspecialchars(json_encode($image), ENT_COMPAT); ?>" />
+
 <div class="uplodify-preview col-lg-3 col-md-3 col-xs-12">
     <i id="<?php echo $field_name . '_spinner'; ?>" class="fa fa-spinner fa-spin" style="font-size: 30px; display: none;" ></i>
-    <img id="<?php echo $field_name . '_preview'; ?>" src="<?php echo URL::abs('public/uploads/' . $image_url); ?>" />
+    <img id="<?php echo $field_name . '_preview'; ?>" src="<?php echo URL::abs('public/uploads/' . $image->url); ?>" />
 </div>
 <div class="filedrag col-lg-9 col-md-9 col-xs-12" id="filedrag">
     <input type="file" id="fileselect" class="fileselect" />
@@ -78,7 +79,7 @@
 <script>
 
     $(function () {
-        
+
         toastr = toastr || {
             warrning: function () {
                 console.warn("You need to implement a notification system");
@@ -91,15 +92,15 @@
             }
         };
 
-        var width = <?php echo $image_width; ?>;
-        var height = <?php echo $image_height; ?>;
+        var width = <?php echo $image->to_size->width; ?>;
+        var height = <?php echo $image->to_size->height; ?>;
         var post_url = base_url + 'uploadify/upload-file';
         var image_path = base_url + 'public/uploads/';
         var preview_image_id = '<?php echo $field_name; ?>_preview';
         var image_path_id = '<?php echo $field_name; ?>';
         var spinner_id = '<?php echo $field_name; ?>_spinner';
-        var imageScaleMode = '<?php echo ($image_scale_mode === Uploadify::SCALE_MODE_FIT) ? 'fit' : 'fil'; ?>';
-
+        var imageScaleMode = <?php echo json_encode($image->scale_mode); ?>;
+        var thumbnails = <?php echo json_encode($image->thumbnails); ?>;
 
         $(document).on("imageResized", function (event) {
 
@@ -166,9 +167,9 @@
                     var height = image.height;
                     var s = 1;
 
-                    if (imageScaleMode === 'fit') {
+                    if (imageScaleMode === 0) {
                         s = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
-                    } else if (imageScaleMode === 'fil') {
+                    } else if (imageScaleMode === 1) {
                         s = Math.max(MAX_WIDTH / width, MAX_HEIGHT / height);
                     }
 
@@ -230,7 +231,14 @@
             var formData = new FormData();
 
             formData.set("file_upload", file);
-            var post_data = '{"width":' + width + ',"height":' + height + ',"scale_mode": "' + imageScaleMode + '"}';
+            //var post_data = '{"width":' + width + ',"height":' + height + ',"scale_mode": "' + imageScaleMode + '"}';
+            
+            var post_data = JSON.stringify({
+                to_width: width,
+                to_height: height,
+                scale_mode: imageScaleMode,
+                thumbnails: thumbnails
+            });
 
             if (post_data) {
                 var post_array = JSON.parse(post_data);
@@ -238,7 +246,7 @@
                     if (post_array.hasOwnProperty(property)) {
                         // do stuff
                         var value = post_array[property];
-                        formData.set(property, value);
+                        formData.set(property, JSON.stringify(value));
                     }
                 }
             }
@@ -256,20 +264,23 @@
                 contentType: false,
                 type: 'POST',
                 success: function (msg) {
-
+                    
+                    // console.log(msg);
+                    
                     var spinner = document.getElementById(spinner_id);
                     spinner.style.display = 'none';
 
                     preview.style.display = 'inline-block';
 
-                    if (msg.path) {
+                    if (msg.url) {
 
-                        preview.src = image_path + msg.path;
+                        preview.src = image_path + msg.url;
+                        
                         var inp = document.getElementById(image_path_id);
-                        inp.value = msg.path;
-                        
+                        inp.value = JSON.stringify(msg); // set the entire json
+
                         toastr.success("Image uploaded");
-                        
+
                     }
                 }
             });

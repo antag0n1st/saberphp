@@ -25,6 +25,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `gallery_photos`
+--
+
+DROP TABLE IF EXISTS `gallery_photos`;
+CREATE TABLE IF NOT EXISTS `gallery_photos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `image` varchar(510) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `comment` varchar(510) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `permission_role`
 --
 
@@ -114,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `users_user_id` int(11) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `date_of_birth` date DEFAULT NULL,
-  `profile_image` varchar(255) DEFAULT NULL,
+  `profile_image` varchar(510) DEFAULT NULL,
   `contact` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
