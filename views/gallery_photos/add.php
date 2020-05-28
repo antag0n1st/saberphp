@@ -11,7 +11,7 @@
                     <div class="form-group">
                         <label for="image" class="col-lg-2 col-sm-2 control-label ">image</label>
                         <div class="col-lg-10">
-                            <?php $uploadify->display('image',$gallery_photo->image); ?>  
+                            <?php $uploadify->display('image'); ?>  
                         </div>
                     </div><div class="form-group">
                         <label for="title" class="col-lg-2 col-sm-2 control-label ">title</label>

@@ -1,5 +1,8 @@
 @echo off
 
+rem navigate to batch file directory
+cd /D "%~dp0"
+
 echo Create new ? Y/N default (no)
 set /p create_new=
 if "%create_new%"=="y" (

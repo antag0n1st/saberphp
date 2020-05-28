@@ -55,7 +55,7 @@
                     <div class="form-group">
                         <label  class="col-lg-2 control-label">Update Avatar</label>
                         <div class="col-lg-6">
-                            <?php $uploadify->display('profile_image',$profile_image->url); ?>                            
+                            <?php $uploadify->display('profile_image'); ?>                            
                         </div>
                     </div>
                     <div class="form-group">

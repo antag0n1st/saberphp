@@ -35,6 +35,14 @@ class Image {
 
             $this->scale_mode = $json_decoded->scale_mode;
             $this->thumbnails = $json_decoded->thumbnails;
+        } else {
+            $this->size = new stdClass();
+            $this->size->width = 600;
+            $this->size->height = 600;
+
+            $this->to_size = new stdClass();
+            $this->to_size->width = 600;
+            $this->to_size->height = 600;
         }
         
     }

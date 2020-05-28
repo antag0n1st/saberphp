@@ -46,7 +46,6 @@ class GalleryPhotosController extends AdminController {
             $gallery_photo->title = $this->get_post('title');
             $gallery_photo->comment = $this->get_post('comment');
 
-
             $gallery_photo->save();
 
             $this->set_confirmation('New Entity Created');
@@ -65,8 +64,10 @@ class GalleryPhotosController extends AdminController {
         $gallery_photo = GalleryPhoto::find_by_id($id);
         
         $uploadify = new Uploadify();
+      
         $uploadify->set_data($gallery_photo->image);
         Load::assign('uploadify', $uploadify);
+        
 
         if (isset($_POST) and $_POST) {
 

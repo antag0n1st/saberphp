@@ -23,23 +23,27 @@ class Uploadify {
     private $thumbnails = [];
     private $template = '../plugins/uploadify/views/uploadify_template';
     private $image = null;
+    private $default_image = 'placeholder.png';
 
     const SCALE_MODE_FIT = 0;
     const SCALE_MODE_FIL = 1;
 
-    public function __construct() {
+    public function __construct($data = null) {
         $this->size = new stdClass();
         $this->size->width = 300;
         $this->size->height = 300;
+        
+        if($data !== null){
+            $this->set_data($json);
+        }
+        
     }
 
-    public function display($field_name, $image_url, $template = null) {
+    public function display($field_name, $image_url = null, $template = null) {
 
-        // when editing an image , you will call set data first , 
-        // and this will be skipped , and it will go smoothly as the $image_url will be ignored in this case
         if ($this->image === null) {
             $data = [
-                'url' => $image_url ? $image_url : 'placeholder.png',
+                'url' => $image_url ? $image_url : $this->default_image,
                 'scale_mode' => $this->scale_mode,
                 'to_size' => [
                     'width' => $this->size->width,
@@ -55,11 +59,14 @@ class Uploadify {
             $json = json_encode($data);
 
             $this->image = new Image($json);
+        } else {
+            $this->image->url = $image_url ? $image_url : $this->image->url;
         }
         
         Load::assign('image', $this->image);
         Load::assign('field_name', $field_name);
-
+        
+        Load::assign('is_blank', $this->image->url === $this->default_image );
 
         Load::view($template ? $template : $this->template);
     }
@@ -100,7 +107,13 @@ class Uploadify {
     }
 
     public function set_data($json) {
-        $this->image = new Image($json);
+        if($json){
+            $this->image = new Image($json);
+        }        
+    }
+    
+    public function set_default($image_name) {
+        $this->default_image = $image_name;
     }
 
 }

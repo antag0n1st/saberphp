@@ -65,7 +65,7 @@
 
 </style>
 
-<input id="<?php echo $field_name; ?>" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo htmlspecialchars(json_encode($image), ENT_COMPAT); ?>" />
+<input id="<?php echo $field_name; ?>" type="hidden" name="<?php echo $field_name; ?>" value="<?php echo $is_blank ? '' : htmlspecialchars(json_encode($image), ENT_COMPAT); ?>" />
 
 <div class="uplodify-preview col-lg-3 col-md-3 col-xs-12">
     <i id="<?php echo $field_name . '_spinner'; ?>" class="fa fa-spinner fa-spin" style="font-size: 30px; display: none;" ></i>
