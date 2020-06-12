@@ -34,6 +34,7 @@ class AuthenticationController extends Controller {
                 // safly remove the password so that it is not stored
                 $user->password_2 = null;
                 Membership::instance()->storeUserToSession($user);
+                Membership::instance()->store_user_to_cookie($user);
 
                 Hooks::apply('user_logged', $user);
                 

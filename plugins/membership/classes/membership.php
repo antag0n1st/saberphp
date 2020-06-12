@@ -70,35 +70,36 @@ class Membership {
             } else {
                 $this->user = new User();
             }
-            
         } else {
 
-            $this->user = $this->get_user_from_cookie();
-            
-            if($this->user){
-                
-                $u = User::find_user(null, null, $this->user->session_id);
-
-                $permissions = $this->user->permissions;
-
-                $this->user = $u ? $u : new User();
-                $this->user->password_2 = null;
-
-                if ($u) {
-                    $this->user->is_logged = true;
-                }
-                $this->user->permissions = $permissions;
-
-                //TODO reload the user into a session
-                $this->storeUserToSession($this->user);
-                
-            } else {                
-                $this->user = new User();                
-            }
-            
+            $this->user = $this->validate_user($this->get_user_from_cookie());
         }
 
         return $this->user;
+    }
+
+    public function validate_user($user) {
+        if ($user) {
+
+            $u = User::find_user(null, null, $user->session_id);
+
+            $permissions = $user->permissions;
+
+            $user = $u ? $u : new User();
+            $user->password_2 = null;
+
+            if ($u) {
+                $user->is_logged = true;
+            }
+            $user->permissions = $permissions;
+
+            //TODO reload the user into a session
+            $this->storeUserToSession($user);
+        } else {
+            $user = new User();
+        }
+
+        return $user;
     }
 
     private function session_started() {
@@ -120,14 +121,22 @@ class Membership {
         }
     }
 
+    public function encript_user($user) {
+        $cookie_value = json_encode($user);
+        $string_to_encrypt = $cookie_value;
+        $password = "my-enc-key-19!";
+        return openssl_encrypt($string_to_encrypt, "AES-128-ECB", $password);
+    }
+
+    public function decript_user($string_to_decrypt) {
+        $password = "my-enc-key-19!";
+        $decrypted_string = openssl_decrypt($string_to_decrypt, "AES-128-ECB", $password);
+        return json_decode($decrypted_string);
+    }
+
     public function get_user_from_cookie() {
         if (isset($_COOKIE['logged_user'])) {
-
-            $string_to_decrypt = $_COOKIE['logged_user'];
-            $password = "my-enc-key-19!";
-            $decrypted_string = openssl_decrypt($string_to_decrypt, "AES-128-ECB", $password);
-
-            return $this->user = json_decode($decrypted_string);
+            return $this->user = $this->decript_user($_COOKIE['logged_user']); // json_decode($decrypted_string);
         } else {
             return new User();
         }
@@ -141,12 +150,7 @@ class Membership {
 
     public function store_user_to_cookie($user) {
         $cookie_name = "logged_user";
-        $cookie_value = json_encode($user);
-
-        $string_to_encrypt = $cookie_value;
-        $password = "my-enc-key-19!";
-        $encrypted = openssl_encrypt($string_to_encrypt, "AES-128-ECB", $password);
-
+        $encrypted = $this->encript_user($user);
         setcookie($cookie_name, $encrypted, time() + MEMBERSHIP_COOKIE_DURATION, "/"); // sec * min * hours
     }
 
@@ -157,7 +161,7 @@ class Membership {
     public static function has($permission) {
         return in_array($permission, Membership::instance()->user->permissions);
     }
-    
+
     public function uuid($data) {
         assert(strlen($data) == 16);
 
