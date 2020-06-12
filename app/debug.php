@@ -1,4 +1,4 @@
-<div style="width: 800px; margin: 50px auto;">
+<div style="width: 100%; margin: 50px auto; padding:10px; ">
     <table>
         <tr>
             <td><span style="color: #666;">Debug info: </span>
@@ -18,7 +18,7 @@
 
         <tr id="vars_panel_" style="display: none;">
             <td>
-                <pre>
+                <pre style="white-space: pre-wrap;">
 GET: <?php print_r($_GET); ?>
 
 POST: <?php print_r($_POST); ?>

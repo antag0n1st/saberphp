@@ -1,0 +1,5 @@
+id
+image varchar 510
+title varchar
+comment varchar
+created_at

@@ -7,7 +7,7 @@ class UsersController extends AdminController {
     public function __construct() {
         parent::__construct();
         
-        $this->need(Permission::USER_MANAGEMENT);
+        $this->need(PERMISSION_USER_MANAGEMENT);
     }
 
     public function main() {
@@ -56,6 +56,7 @@ class UsersController extends AdminController {
             $role = new Role();
             $role->name = $this->get_post('name');
             $role->description = $this->get_post('description');
+            $role->updated_at = TimeHelper::DateTimeAdjusted();
             $role->save();
 
             URL::redirect('users/roles');
@@ -72,6 +73,7 @@ class UsersController extends AdminController {
 
             $role->name = $this->get_post('name');
             $role->description = $this->get_post('description');
+            $role->updated_at = TimeHelper::DateTimeAdjusted();
             $role->save();
 
             URL::redirect('users/roles');

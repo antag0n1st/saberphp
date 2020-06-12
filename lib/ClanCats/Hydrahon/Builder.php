@@ -70,7 +70,7 @@ class Builder
      *
      * @var callable
      */
-    protected $executionCallback = null;
+    public $executionCallback = null;
 
     /**
      * Create a new Hydrahon builder instance using the giving grammar

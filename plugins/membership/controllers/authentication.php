@@ -35,6 +35,8 @@ class AuthenticationController extends Controller {
                 $user->password_2 = null;
                 Membership::instance()->storeUserToSession($user);
 
+                Hooks::apply('user_logged', $user);
+                
                 URL::redirect('admin');
             } else {
 
@@ -45,7 +47,11 @@ class AuthenticationController extends Controller {
     }
 
     public function logout() {
+        
+        Hooks::apply('user_logout', isset($_SESSION['logged_user']) ? $_SESSION['logged_user'] : null);
+        
         Membership::instance()->clear_user_data();
+        
         URL::redirect('login');
     }
 
@@ -90,14 +96,6 @@ class AuthenticationController extends Controller {
             }
 
 
-
-            // check if username exist
-//            if (strpos(strtolower($pass), strtolower($this->get_post('username'))) !== false) {
-//                $this->set_error('password must not contain the username');
-//                $this->clear_pass();
-//                return;
-//            }
-
             $user->user_id = NULL;
             
             $user->password_2 = md5($pass);
@@ -113,13 +111,13 @@ class AuthenticationController extends Controller {
             if (HOST_ID == 0) {
                 Load::helper('mailer');
                 $msg = "User with \nusername: " . $user->username . " \n";
-               // $msg .= "email: " . $user->email . " \n";
-               // $msg .= "full name: " . $user->username;
                 Mailer::send(MAIL_INFO, MAIL_ADMIN, 'new user created', $msg, false);
             }
 
             $this->set_confirmation('Registered!');
-
+            
+            Hooks::apply('user_created', $user);
+            
             URL::redirect('login');
         }
     }

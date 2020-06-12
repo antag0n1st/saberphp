@@ -38,7 +38,11 @@ class ProfileController extends AdminController {
         $profile = UserProfile::select()->where('users_user_id', $id)->execute()[0];
         $profile->date_of_birth = TimeHelper::prep_for_db($this->get_post('birthday'));
         $profile->contact = $this->get_post('contact');
-        $profile->profile_image = $this->get_post('profile_image');
+        $profile_image = $this->get_post('profile_image');
+        if($profile_image){
+            $profile->profile_image = $profile_image;
+        }
+        
         $profile->save();
 
         $this->set_confirmation("Updated!");

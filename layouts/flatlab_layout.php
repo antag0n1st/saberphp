@@ -22,6 +22,15 @@
                     <?php Controller::load_main_view(); ?> 
                     <!-- page end-->
                 </section>
+
+                <section class="wrapper">
+                    <?php
+                    if (HOST_ID == 1) {
+                        Load::app('debug');
+                    }
+                    ?>
+                </section>
+
             </section>
             <!--main content end-->
 
@@ -32,7 +41,7 @@
         </section>
 
         <!-- js placed at the end of the document so the pages load faster -->
-        
+
         <script src="<?php echo URL::abs('public/flatlab/js/bootstrap.min.js'); ?>"></script>
         <script class="include" type="text/javascript" src="<?php echo URL::abs('public/flatlab/js/jquery.dcjqaccordion.2.7.js'); ?>"></script>
         <script src="<?php echo URL::abs('public/flatlab/js/jquery.scrollTo.min.js'); ?>"></script>

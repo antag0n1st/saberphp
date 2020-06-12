@@ -119,7 +119,7 @@ copy('saberphp/php.ini', $dir_name . '/php.ini');
 file_put_contents($dir_name . '/config.php', $content);
 
 // empty models dir
-array_map( 'unlink', array_filter((array) glob($dir_name . '/config/scaffolding/models/*') ) );
+//array_map( 'unlink', array_filter((array) glob($dir_name . '/config/scaffolding/models/*') ) );
 
 // remove images dir
 recursiveRemove($dir_name . '/public/uploads/images/');

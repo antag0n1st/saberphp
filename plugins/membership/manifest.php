@@ -7,7 +7,7 @@
 $conf = array( 
             'classes' => array('membership') ,
             'controllers' => array('authentication'),
-            'onload' => 'onload' // the file name in the plugin root that needs to be called on every page load
+//            'onload' => 'onload' // the file name in the plugin root that needs to be called on every page load
 );
 
 ?>

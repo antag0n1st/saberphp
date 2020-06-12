@@ -81,7 +81,7 @@ if ($mode === "o" or $mode === "overwrite") {
 
 function listFolderFiles($dir) {
 
-    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text', 'date'];
+    $supported_type = ['int', 'varchar', 'datetime', 'tinyint', 'text', 'date' , 'float'];
     $attributes = ['unsigned', 'signed'];
 
     $ffs = scandir($dir);
@@ -371,12 +371,12 @@ function doScaffolding($table_name, $fields, $keys) {
 
             $post_fields .= "\t\t\$" . $model_instance . '->' . $name . " = \$this->get_post('" . $name . "');\n";
 
-            $form_controls .= '<div class="form-group">
+            $form_controls .= '\t\t\t<div class="form-group">
                         <label for="' . $name . '" class="col-lg-2 col-sm-2 control-label ">' . $name . '</label>
                         <div class="col-lg-10">
                             <?php HTML::textfield(\'' . $name . '\', \'form-control\', null, null, false, $' . $model_instance . '->' . $name . ' ); ?>
                         </div>
-                    </div>';
+                    </div>\n\n';
         }
         $db_fields[] = $name;
         $properties .= "\tpublic $" . $name . ";\n";

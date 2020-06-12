@@ -1,5 +1,0 @@
-id primary 
-name varchar 
-count index 
-sum 
-created_at datetime 

@@ -1,1 +1,0 @@
-<?php // Membership::instance()->masterLoginCheck(); ?>

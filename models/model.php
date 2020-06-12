@@ -1,15 +1,12 @@
 <?php
 
+define('QUERY_BUILDER_ORM', 0);
+define('QUERY_BUILDER_QUERY', 1);
+
 require BASE_DIR . "lib/ClanCats/Hydrahon/Builder.php";
-
-
 require BASE_DIR . "lib/ClanCats/Hydrahon/BaseQuery.php";
 require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql.php";
-
-
-
 require BASE_DIR . "lib/ClanCats/Hydrahon/TranslatorInterface.php";
-
 require BASE_DIR . "lib/ClanCats/Hydrahon/Translator/Mysql.php";
 require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Base.php";
 require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Table.php";
@@ -21,15 +18,6 @@ require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Update.php";
 require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Truncate.php";
 require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Insert.php";
 
-//require BASE_DIR."lib/Envms/FluentPDO/src/Queries/Base.php";
-//
-//require BASE_DIR."lib/Envms/FluentPDO/src/Query.php";
-//require BASE_DIR."lib/Envms/FluentPDO/Structure.php";
-//require BASE_DIR."lib/Envms/FluentPDO/Exception.php";
-//require BASE_DIR."lib/Envms/FluentPDO/Literal.php";
-//require BASE_DIR."lib/Envms/FluentPDO/Regex.php";
-//require BASE_DIR."lib/Envms/FluentPDO/Utilities.php";
-
 /*
  * @property Database $db
  */
@@ -37,11 +25,9 @@ require BASE_DIR . "lib/ClanCats/Hydrahon/Query/Sql/Insert.php";
 class Model {
 
     private static $db = null;
-    private static $query_builder = null;
-
-    public function __construct() {
-        
-    }
+    protected static $query_builder = null;
+    protected static $callback_orm;
+    protected static $callback_query;
 
     /**
      *
@@ -128,12 +114,35 @@ class Model {
         return $object_array;
     }
 
-    public static function count_all() {
+    public static function count_all($where = []) {
 
         $sql = "SELECT COUNT(*) FROM " . static::$table_name;
+        if (!empty($where)) {
+
+            $strs = [];
+
+            if (!is_array($where[0])) {
+                $strs [] = static::_synthesize_where($where);
+            } else {
+                foreach ($where as $parts) {
+                    $strs [] = static::_synthesize_where($parts);
+                }
+            }
+
+            $sql .= " WHERE " . implode(' AND ', $strs);
+        }
         $result_set = Model::db()->query($sql);
         $row = Model::$db->fetch_array($result_set);
         return array_shift($row);
+    }
+
+    public static function _synthesize_where($parts) {
+        $count = count($parts);
+        if ($count === 2) {
+            return $parts[0] . " = '" . Model::db()->prep($parts[1]) . "'";
+        } else if ($count === 3) {
+            return $parts[0] . $parts[1] . " '" . Model::db()->prep($parts[2]) . "'";
+        }
     }
 
     public static function instantiate($record) {
@@ -271,33 +280,52 @@ class Model {
      * 
      * @return \ClanCats\Hydrahon\Query\Sql\Table
      */
-    public static function query() {
+    public static function query($type = QUERY_BUILDER_ORM) {
 
-        if (self::$query_builder === null) {
-            // create a new mysql query builder
-            self::$query_builder = new \ClanCats\Hydrahon\Builder('mysql', function($query, $queryString, $queryParameters) {
+        if (static::$query_builder === null) {
+
+            static::$callback_orm = function ($query, $queryString, $queryParameters) {
+
                 $queryString = preg_replace_callback('/\?/', function( $match) use( &$queryParameters) {
                     $param = array_shift($queryParameters);
                     return '\'' . Model::db()->prep($param) . '\'';
                 }, $queryString);
 
                 if ($query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface) {
-                    return self::find_by_sql($queryString);
+                    return static::find_by_sql($queryString);
                 } else {
                     Model::db()->query($queryString);
                 }
-            });
+            };
+
+            static::$callback_query = function ($query, $queryString, $queryParameters) {
+
+                $queryString = preg_replace_callback('/\?/', function( $match) use( &$queryParameters) {
+                    $param = array_shift($queryParameters);
+                    return '\'' . Model::db()->prep($param) . '\'';
+                }, $queryString);
+
+                return $queryString;
+            };
+
+            static::$query_builder = new \ClanCats\Hydrahon\Builder('mysql', static::$callback_orm);
         }
 
-        return self::$query_builder->table(static::$table_name);
+        if ($type === QUERY_BUILDER_ORM) {
+            static::$query_builder->executionCallback = Closure::bind(static::$callback_orm, null, static::class);
+        } else if ($type === QUERY_BUILDER_QUERY) {
+            static::$query_builder->executionCallback = Closure::bind(static::$callback_query, null, static::class);
+        }
+
+        return static::$query_builder->table(static::$table_name);
     }
-    
+
     /**
      * 
      * @return \ClanCats\Hydrahon\Query\Sql\Table
      */
-    public static function select($args = null) {
-        return self::query()->select($args);
+    public static function select($args = null, $type = QUERY_BUILDER_ORM) {
+        return static::query($type)->select($args);
     }
 
 }
