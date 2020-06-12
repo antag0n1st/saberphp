@@ -103,7 +103,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_logged_at` datetime DEFAULT NULL,
   `login_count` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `role_id` char(1) COLLATE utf8_bin DEFAULT NULL,
-  `session_id` varchar(36) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(255) COLLATE utf8_bin NOT NULL,
   `full_name` varchar(255) COLLATE utf8_bin NOT NULL,
   `reset_code` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -115,8 +114,27 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `password_2`, `created_at`, `last_logged_at`, `login_count`, `role_id`, `session_id`, `email`, `full_name`, `reset_code`) VALUES
-(2, 'admin', '21232f297a57a5a743894a0e4a801fc3', '2020-05-25 22:27:52', '2020-05-25 22:29:39', 2, '1', '8772C007-233D-4074-9918-5F5F63366334', 'trbogazov@gmail.com', 'ilija trbogazov', '');
+INSERT INTO `users` (`user_id`, `username`, `password_2`, `created_at`, `last_logged_at`, `login_count`, `role_id`,  `email`, `full_name`, `reset_code`) VALUES
+(2, 'admin', '21232f297a57a5a743894a0e4a801fc3', '2020-05-25 22:27:52', '2020-05-25 22:29:39', 2, '1', 'trbogazov@gmail.com', 'ilija trbogazov', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `known_sessions`
+--
+
+DROP TABLE IF EXISTS `known_sessions`;
+CREATE TABLE IF NOT EXISTS `known_sessions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `session_id` varchar(36) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `valid_until` bigint(20) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `session_id` (`session_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 

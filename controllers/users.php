@@ -30,10 +30,7 @@ class UsersController extends AdminController {
     public function kick_out($id){
         $this->no_layout();
         
-        $user = User::find_by_id($id);
-        /* @var $user User */
-        $user->session_id = '';
-        $user->save();
+        KnownSession::drop_sessions($id);
         
         $this->set_confirmation('The user was kicked out');
         URL::redirect_to_refferer();

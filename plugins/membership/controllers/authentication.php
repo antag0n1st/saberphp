@@ -26,10 +26,22 @@ class AuthenticationController extends Controller {
             if ($user) {
 
               //  $user->login_type = User::$STANDARD;
-                $user->session_id = Strings::GUID();
+                $session_id = Strings::GUID();
+                
+                $user->session_id = $session_id;
                 $user->last_logged_at = TimeHelper::DateTimeAdjusted();
                 $user->login_count++;
                 $user->save();
+                
+                KnownSession::delete_invalid_sessions($user->user_id);
+                
+                $ks = new KnownSession();
+                $ks->session_id = $session_id;
+                $ks->user_id = $user->user_id;
+                $ks->valid_until = time() + MEMBERSHIP_COOKIE_DURATION;
+                $ks->created_at = TimeHelper::DateTimeAdjusted();
+                $ks->save();
+                
 
                 // safly remove the password so that it is not stored
                 $user->password_2 = null;
@@ -50,9 +62,19 @@ class AuthenticationController extends Controller {
     public function logout() {
         
         Hooks::apply('user_logout', isset($_SESSION['logged_user']) ? $_SESSION['logged_user'] : null);
-        
+      
+        $user = Membership::instance()->getUserFromSession();
+        if($user){
+            if($user->session_id){
+                 $knownSession = KnownSession::find_valid(Membership::instance()->user->session_id, time());
+                 if($knownSession){
+                     $knownSession->delete();
+                 }
+            }
+        }
+     
         Membership::instance()->clear_user_data();
-        
+                
         URL::redirect('login');
     }
 
@@ -100,7 +122,7 @@ class AuthenticationController extends Controller {
             $user->user_id = NULL;
             
             $user->password_2 = md5($pass);
-            $user->session_id = Strings::GUID();
+          
             $user->created_at = TimeHelper::DateTimeAdjusted();
             $user->last_logged_at = TimeHelper::DateTimeAdjusted();
             $user->user_level = 0;

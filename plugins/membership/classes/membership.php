@@ -3,6 +3,7 @@
 Load::plugin_model('membership', 'user');
 Load::plugin_model('membership', 'role');
 Load::plugin_model('membership', 'permission');
+Load::plugin_model('membership', 'known_session');
 
 class Membership {
 
@@ -53,23 +54,39 @@ class Membership {
         Load::plugin_view('membership', 'login_menu');
     }
 
-    public function masterLoginCheck() {
+    public function masterLoginCheck($session_duration = 0) {
 
         $this->user = $this->getUserFromSession();
-
+       
+                
         if ($this->user->user_id) {
             // if there is an id , make sure we have the user id the database
             $u = User::find_by_id($this->user->user_id);
-
-            if ($u and $u->session_id and $u->session_id == $this->user->session_id) {
-                $permissions = $this->user->permissions;
-                $this->user = $u;
-                $this->user->password_2 = null;
-                $this->user->is_logged = true;
-                $this->user->permissions = $permissions;
+            
+            if ($u) {
+                
+                $session_id = $this->user->session_id;                
+                $validSession = KnownSession::is_valid($this->user->user_id,$session_id , time());
+                
+                if($validSession){
+                    
+                    $permissions = $this->user->permissions;
+                    $this->user = $u;
+                    $this->user->session_id = $session_id;
+                    $this->user->password_2 = null;
+                    $this->user->is_logged = true;
+                    $this->user->permissions = $permissions;
+                    
+                    KnownSession::update_session($validSession->id,$session_duration ? $session_duration : time() + MEMBERSHIP_COOKIE_DURATION);
+                    
+                } else {
+                     $this->user = new User();
+                }
+                
             } else {
                 $this->user = new User();
             }
+            
         } else {
 
             $this->user = $this->validate_user($this->get_user_from_cookie());
@@ -78,10 +95,12 @@ class Membership {
         return $this->user;
     }
 
-    public function validate_user($user) {
+    public function validate_user($user , $valid_until = 0) {
         if ($user) {
+                        
+            $session_id = $user->session_id;
 
-            $u = User::find_user(null, null, $user->session_id);
+            $u = User::find_user(null, null, $session_id , $valid_until);
 
             $permissions = $user->permissions;
 
@@ -90,10 +109,10 @@ class Membership {
 
             if ($u) {
                 $user->is_logged = true;
+                $user->session_id = $session_id;
             }
             $user->permissions = $permissions;
 
-            //TODO reload the user into a session
             $this->storeUserToSession($user);
         } else {
             $user = new User();
@@ -122,6 +141,7 @@ class Membership {
     }
 
     public function encript_user($user) {
+        $user->valid_until = time() + MEMBERSHIP_COOKIE_DURATION;
         $cookie_value = json_encode($user);
         $string_to_encrypt = $cookie_value;
         $password = "my-enc-key-19!";

@@ -4,7 +4,7 @@ class User extends Model {
 
     public static $table_name = 'users';
     public static $id_name = 'user_id';
-    public static $db_fields = array('user_id', 'username', 'password_2', 'created_at', 'last_logged_at', 'login_count', 'role_id', 'session_id' , 'email','full_name','reset_code');
+    public static $db_fields = array('user_id', 'username', 'password_2', 'created_at', 'last_logged_at', 'login_count', 'role_id' , 'email','full_name','reset_code');
     public static $FACEBOOK = 'facebook';
     public static $ANONYMOUS = 'anonymous';
     public static $STANDARD = 'standard';
@@ -34,7 +34,21 @@ class User extends Model {
         return $user;
     }
 
-    public static function find_user($username = null, $password = null, $session_id = null) {
+    public static function find_user($username = null, $password = null, $session_id = null , $valid_until = 0) {
+        
+        if($session_id){
+            
+             $validSession = KnownSession::find_valid($session_id, $valid_until ? $valid_until : time());
+                          
+             if($validSession){
+                 return static::find_by_id($validSession->user_id);
+             } else {
+                 return null;
+             }
+            
+        }
+        
+        //////////////////
 
         $query = " SELECT * from users ";
 
@@ -42,15 +56,7 @@ class User extends Model {
         if ($username) {
             $where[] = " username = '" . Model::db()->prep($username) . "' ";
             $where[] = " password_2 = '" . md5(Model::db()->prep($password)) . "' ";
-        }
-
-//        if ($password) {
-//            $where[] = " password_2 = '" . md5(Model::db()->prep($password)) . "' ";
-//        }
-
-        if (!$username && !$password && $session_id) {
-            $where[] = " session_id = '" . Model::db()->prep($session_id) . "' ";
-        }
+        } 
 
         if (count($where)) {
             $query .= ' WHERE ' . implode('AND', $where);
